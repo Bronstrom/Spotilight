@@ -1,24 +1,20 @@
 name: Other
-description: An issue not fitting under a feature or bug label.
+description: An issue not fitting under an enhancement or bug label.
 projects: ["Bronstrom/Spotilight"]
 body:
   - type: markdown
-  attributes:
-    value: |
-      Thanks for taking the time to fill out this issue!
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this issue!
   - type: textarea
     id: description
     attributes:
       label: Description
       description: Basic details about your request for the application. 
       placeholder: Enter a description
-    validations:
-      required: true
   - type: textarea
     id: implementation-details
     attributes:
-      label: Any additional implementation details?
+      label: Implementation details
       description: Any additional details that may be helpful to completing this issue?
       placeholder: Enter implementation details
-    validations:
-      required: false
