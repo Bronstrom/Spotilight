@@ -1,6 +1,5 @@
 name: Task
 description: The smallest form of work to be completed.
-title: ""
 label: ["feature"]
 projects: ["Bronstrom/Spotilight"]
 body:

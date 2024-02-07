@@ -1,6 +1,5 @@
 name: Epic
 description: Large body of work containing user stories.
-title: ""
 label: ["feature"]
 projects: ["Bronstrom/Spotilight"]
 body:
