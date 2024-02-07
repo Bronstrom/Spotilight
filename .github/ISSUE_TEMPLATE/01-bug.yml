@@ -23,8 +23,8 @@ body:
       description: What occured instead?
       placeholder: Enter a description
   - type: textarea
-  id: implementation-details
-  attributes:
-    label: Implementation details
-    description: Any additional details that may be helpful to patching up this bug?
-    placeholder: Enter implementation details
+    id: implementation-details
+    attributes:
+      label: Implementation details
+      description: Any additional details that may be helpful to patching up this bug?
+      placeholder: Enter implementation details
