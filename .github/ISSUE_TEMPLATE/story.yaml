@@ -1,0 +1,29 @@
+name: Story
+description: A requirement for the application.
+title: ""
+label: ["feature"]
+projects: ["Bronstrom/Spotilight"]
+body:
+  - type: markdown
+  attributes:
+    value: |
+      Thanks for taking the time to fill out this story!
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A user's need expressed in non-technical language. This request should address
+        _who_ is this being built for, _what_ is the objective, and _why_ is this the objective?
+      placeholder: As a (persona), I want (goal), so that (reason)
+    validations:
+      required: true
+  - type: textarea
+    id: tasks
+    attributes:
+      label: Tasks
+      description: List any tasks that should be associated with this story.
+      value: "- [ ]\n
+              - [ ]\n
+              - [ ]"
+    validations:
+      required: false
