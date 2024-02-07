@@ -1,0 +1,38 @@
+name: Bug
+description: A defect in the codebase or something isn't working properly according to the spec.
+label: ["bug"]
+projects: ["Bronstrom/Spotilight"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Oh no! Something isn't working correctly. Thanks for taking the time to report this bug!
+  - type: textarea
+    attributes:
+      label: Description
+      description: Provide some basic info about the problem.
+      placeholder: Enter a description
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected behavior
+      description: What were you predicting to happen in the application?
+      placeholder: Enter a description
+    validations:
+      required: false
+  - type: textarea
+    attributes:
+      label: Actual behavior
+      description: What occured instead?
+      placeholder: Enter a description
+    validations:
+      required: false
+  - type: textarea
+  id: implementation-details
+  attributes:
+    label: Additional implementation details
+    description: Any additional details that may be helpful to patching up this bug?
+    placeholder: Enter implementation details
+  validations:
+    required: false
