@@ -1,5 +1,5 @@
 name: Bug
-description: A defect in the codebase or something isn't working propperly according to the spec.
+description: A defect in the codebase or something isn't working properly according to the spec.
 title: ""
 label: ["bug"]
 projects: ["Bronstrom/Spotilight"]
@@ -37,4 +37,3 @@ body:
     placeholder: Enter implementation details
   validations:
     required: false
-    

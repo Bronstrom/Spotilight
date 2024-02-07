@@ -1,6 +1,7 @@
 name: Story
 description: A requirement for the application.
 title: ""
+label: ["feature"]
 projects: ["Bronstrom/Spotilight"]
 body:
   - type: markdown
@@ -21,8 +22,8 @@ body:
     attributes:
       label: Tasks
       description: List any tasks that should be associated with this story.
-      value: "- [ ]
-              - [ ]
+      value: "- [ ]\n
+              - [ ]\n
               - [ ]"
     validations:
       required: false

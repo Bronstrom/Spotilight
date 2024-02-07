@@ -1,6 +1,7 @@
 name: Task
 description: The smallest form of work to be completed.
 title: ""
+label: ["feature"]
 projects: ["Bronstrom/Spotilight"]
 body:
   - type: markdown
@@ -22,8 +23,8 @@ body:
       description: What requirements are needed to be completed in order for this issue to be
         fulfilled.
       placeholder: Enter requirements
-      value: "- [ ]
-              - [ ]
+      value: "- [ ]\n
+              - [ ]\n
               - [ ]"
     validations:
       required: true
@@ -35,4 +36,3 @@ body:
       placeholder: Enter implementation details
     validations:
       required: false
-      
