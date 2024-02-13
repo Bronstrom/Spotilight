@@ -21,7 +21,7 @@ export default {
   },
   methods: {
     handleSpotifyAuthenticate() {
-      const path = "http://localhost:5000/login";
+      const path = "http://localhost:5000/auth/login";
       axios
         .get(path)
         .then((res) => {

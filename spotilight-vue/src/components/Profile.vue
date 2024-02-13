@@ -46,7 +46,7 @@ export default {
         });
     },
     handleAccountLogout() {
-      const path = "http://localhost:5000/account";
+      const path = "http://localhost:5000/auth/account";
       axios
         .get(path)
         .then((res) => {
