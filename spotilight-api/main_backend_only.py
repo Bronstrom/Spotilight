@@ -61,8 +61,7 @@ def login():
 # "/account" endpoint: Configure settings and logout
 @app.route("/account", methods=["GET"])
 def account():
-    return redirect("https://accounts.spotify.com")
-    #return f"<a href='https://accounts.spotify.com' target='_blank'>Account & Logout of Spotify</a>"
+    return f"<a href='https://accounts.spotify.com' target='_blank'>Account & Logout of Spotify</a>"
  
 # "/callback" endpoint
 @app.route("/callback", methods=["GET"])
@@ -136,7 +135,3 @@ if __name__ == "__main__":
     app.config['SESSION_TYPE'] = 'filesystem'
 
     app.run(debug=True)
-
-
-#return f"Logout of Spotilight! <a href='https://accounts.spotify.com' target='_blank'>Account & Logout of Spotify</a>"
-# Should I be putting method["GET"] everywhere?
