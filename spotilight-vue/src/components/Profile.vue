@@ -46,11 +46,15 @@ export default {
         });
     },
     handleAccountLogout() {
-      const path = "http://localhost:5000/auth/account";
-      axios
-        .get(path)
+      const path = "http://localhost:5000/auth/logout";
+      axios({
+        method: "GET",
+        url: path,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:5000/*" },
+      })
         .then((res) => {
-          window.location.href = res?.data?.url;
+          const resposeUrl = res?.data?.url;
+          window.open(resposeUrl, "_blank");
         })
         .catch((err) => {
           console.error(err);
