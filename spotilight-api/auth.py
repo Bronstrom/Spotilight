@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, Blueprint
+from flask import Flask, Blueprint, redirect, request, make_response
 from dotenv import dotenv_values
 from datetime import datetime
 import random, string, urllib.parse, requests
@@ -18,6 +18,7 @@ AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
 TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token"
 API_BASE_ENDPOINT = "https://api.spotify.com/v1/"
 ACCOUNT_URL = "https://accounts.spotify.com"
+LOGOUT_URL = "https://accounts.spotify.com/logout"
 # Define callback URI
 # NOTE: Callback URIs are defined in the Spotify for Developers app dashboard
 REDIRECT_URI = BACK_END_URL + "/auth/callback"
@@ -38,6 +39,14 @@ def set_token_cookies(token, response):
     token_expiration = datetime.now().timestamp() + token["expires_in"]
     response.set_cookie("expires_at", str(token_expiration))
     response.set_cookie("refresh_token", token["refresh_token"])
+
+# Helper function to immediately expire cookies, "deleting" them
+def delete_token_cookies(response):
+    response.set_cookie("access_token", "", expires=0)
+    response.set_cookie("token_type", "", expires=0)
+    response.set_cookie("scope", "", expires=0)
+    response.set_cookie("expires_at", "", expires=0)
+    response.set_cookie("refresh_token", "", expires=0)
 
 # "/login" endpoint: Redirect to Spotify's login page with scopes outlined
 @auth_bp.route("/login", methods=["GET"])
@@ -60,6 +69,11 @@ def login():
 @auth_bp.route("/account", methods=["GET"])
 def account():
     return {"url": ACCOUNT_URL}
+
+# "/logout" endpoint: Completely logs the user out and removes cookies
+@auth_bp.route("/logout", methods=["GET"])
+def logout():
+    return {"url": LOGOUT_URL}
  
 # "/callback" endpoint
 @auth_bp.route("/callback", methods=["GET"])
