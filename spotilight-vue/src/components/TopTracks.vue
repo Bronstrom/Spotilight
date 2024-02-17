@@ -1,13 +1,13 @@
 <template>
   <div class="top-tracks m-5">
-    <h3>TopTracks</h3>
+    <h3>Top Tracks</h3>
     <div
       class="track row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
     >
       <div
         class="track col"
         v-for="(track, index) in topTracks?.items"
-        v-bind:key="track - index"
+        v-bind:key="track.id - index"
       >
         <div class="track card h-100">
           {{ console.log(track) }}
