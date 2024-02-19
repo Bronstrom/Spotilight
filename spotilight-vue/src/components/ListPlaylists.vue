@@ -46,6 +46,7 @@
         v-for="(playlist, index) in filterList(sortedPlaylistList)"
         v-bind:key="'playlist' + index"
       >
+        {{ console.log(playlist) }}
         <div class="playlist card h-100">
           <img
             class="playlist card-image"
@@ -59,9 +60,15 @@
             <h6 class="playlist card-album">
               Owner: {{ playlist.owner?.display_name }}
             </h6>
-            <h6 class="playlist card-album">
+            <p class="playlist card-album">
               Visibility: {{ playlist.public ? "Public" : "Private" }}
-            </h6>
+            </p>
+            <p class="playlist card-album">
+              Description: {{ playlist.description || "* None *" }}
+            </p>
+            <p class="playlist card-album">
+              Track Count: {{ playlist.tracks.total }}
+            </p>
             <a class="btn-primary" :href="playlist.href"
               >Check it out on Spotify</a
             >
