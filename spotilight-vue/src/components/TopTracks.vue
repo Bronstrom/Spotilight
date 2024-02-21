@@ -9,23 +9,23 @@
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
-        Dropdown button
+        {{ timeRange }}
       </button>
       <div class="dropdown-menu" aria-labelledby="top-track-frequency-button">
         <a
           class="dropdown-item"
-          @click="(this.curTopTracks = []), changeTimeRange('short_term')"
-          >Short</a
+          @click="(timeRange = 'Short Term'), changeTimeRange('short_term')"
+          >Short Term (Past 4 Weeks)</a
         >
         <a
           class="dropdown-item"
-          @click="(this.curTopTracks = []), changeTimeRange('medium_term')"
-          >Medium</a
+          @click="(timeRange = 'Medium Term'), changeTimeRange('medium_term')"
+          >Medium Term (Past 6 Months)</a
         >
         <a
           class="dropdown-item"
-          @click="(this.curTopTracks = []), changeTimeRange('long_term')"
-          >Long</a
+          @click="(timeRange = 'Long Term'), changeTimeRange('long_term')"
+          >Long Term (Past Few Years)</a
         >
       </div>
     </div>
@@ -93,6 +93,7 @@ export default {
       topTracksMedium: [],
       topTracksLong: [],
       curTopTracks: [],
+      timeRange: "Medium Term",
     };
   },
   methods: {
