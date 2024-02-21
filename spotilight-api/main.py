@@ -24,6 +24,9 @@ def index():
 from auth import auth_bp
 app.register_blueprint(auth_bp, url_prefix="/auth")
 
+from spotlight import spotlight_bp
+app.register_blueprint(spotlight_bp, url_prefix="/spotlight")
+
 # Initialize Flask app
 if __name__ == "__main__":
     app.secret_key = secret_key

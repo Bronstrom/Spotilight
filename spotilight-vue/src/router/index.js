@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
+import SpotlightView from "@/views/SpotlightView.vue";
 import Login from "@/components/Login.vue";
 import Profile from "@/components/Profile.vue";
 import PlaylistView from "@/views/PlaylistView.vue";
@@ -14,6 +15,11 @@ const routes = [
     path: "/playlist",
     name: "playlist",
     component: PlaylistView,
+  },
+  {
+    path: "/spotlight",
+    name: "spotlight",
+    component: SpotlightView,
   },
   {
     path: "/about",
