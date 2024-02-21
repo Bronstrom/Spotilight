@@ -25,10 +25,10 @@
             <a class="nav-link" href="/playlist">Playlist</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/about">About</a>
+            <a class="nav-link" href="/spotlight">Spotlight</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/spotlight">Spotlight</a>
+            <a class="nav-link" href="/about">About</a>
           </li>
           <li class="nav-item">
             <a
