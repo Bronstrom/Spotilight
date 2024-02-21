@@ -4,6 +4,7 @@
     data-bs-theme="dark"
   >
     <div class="container-fluid">
+      <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" height="25" />
       <a class="navbar-brand" href="/">Spotilight</a>
       <button
         class="navbar-toggler"
