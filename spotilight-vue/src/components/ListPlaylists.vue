@@ -54,7 +54,9 @@
             :src="playlist.images[0]?.url"
             :alt="playlist.name + ' playlist art'"
           />
-          <p v-else>No Playlist Image Provided</p>
+          <p v-else class="playlist not-specified">
+            No Playlist Image Provided
+          </p>
           <div class="playlist card-body">
             <h5 class="playlist card-title">{{ playlist.name }}</h5>
             <h6 class="playlist card-album">
