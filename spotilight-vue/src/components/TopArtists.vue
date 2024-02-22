@@ -63,8 +63,14 @@
                 >No genres specified</span
               >
             </p>
+            <p class="artist card-text">
+              Follower Count: {{ artist.followers?.total }}
+            </p>
+            <p class="artist card-text">
+              Spotify Popularity Score: {{ artist?.popularity }} / 100
+            </p>
             <a class="btn-primary" :href="artist.href"
-              >Check it out on Spotify</a
+              >Check them out on Spotify</a
             >
           </div>
         </div>
