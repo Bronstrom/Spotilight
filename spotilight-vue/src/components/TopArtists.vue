@@ -38,7 +38,7 @@
         v-bind:key="artist.id"
       >
         <div class="artist card h-100">
-          {{ console.log(artist) }}
+          <!--{{ console.log(artist) }}-->
           <img
             class="artist card-image"
             :src="artist.images[0].url"
@@ -144,6 +144,38 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+
+      /* TOOD: Try simpler axios structure
+      const short_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=short_term&offset=0&limit=${TOP_COUNT}`;
+      const medium_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&offset=0&limit=${TOP_COUNT}`;
+      const long_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=long_term&offset=0&limit=${TOP_COUNT}`;
+
+      const [
+        shortTermArtistList,
+        mediumTermArtistList,
+        longTermArtistList,
+      ] = await Promise.all([
+        axios({
+          method: "GET",
+          url: short_term_artist_endpoint,
+          headers: getHeader(),
+        }),
+        axios({
+          method: "GET",
+          url: medium_term_artist_endpoint,
+          headers: getHeader(),
+        }),
+        axios({
+          method: "GET",
+          url: long_term_artist_endpoint,
+          headers: getHeader(),
+        }),
+      ]);
+
+      this.topArtistsShort = shortTermArtistList.data.item;
+      this.topArtistsMedium = mediumTermArtistList.data.item;
+      this.topArtistsLong = longTermArtistList.data.item;
+      */
     },
     changeTimeRange(range) {
       switch (range) {
