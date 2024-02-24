@@ -1,6 +1,9 @@
 <template>
   <div class="top-genres m-5">
     <h3>Top Genres</h3>
+    <div class="chart container" style="height: 40vh; width: 80vw">
+      <canvas id="pieChart"></canvas>
+    </div>
     <div class="dropdown">
       <button
         class="btn btn-primary dropdown-toggle"
@@ -85,6 +88,7 @@
 <script>
 import axios from "axios";
 import cookie from "js-cookie";
+import Chart from "chart.js/auto";
 
 //const BACK_END_URL = "http://localhost:5000";
 const TOP_COUNT = 50;
@@ -114,6 +118,32 @@ export default {
 
       timeRange: "Medium Term",
     };
+  },
+  mounted() {
+    const chartEl = document.getElementById("pieChart");
+
+    if (this.spotifyCatagoryGenreCountCurrent?.length > 0) {
+      new Chart(chartEl, {
+        type: "pie",
+        data: {
+          labels: Object.keys(this.spotifyCatagoryGenreCountCurrent),
+          datasets: [
+            {
+              label: "Points",
+              backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              data: Object.values(this.spotifyCatagoryGenreCountCurrent),
+            },
+          ],
+        },
+        options: {
+          cutoutPercentage: 33,
+          rotation: Math.PI,
+          animation: {
+            animateScale: true,
+          },
+        },
+      });
+    }
   },
   methods: {
     async getTopGenres() {
