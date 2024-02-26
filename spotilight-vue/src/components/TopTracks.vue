@@ -47,7 +47,11 @@
           <div class="track card-body">
             <h5 class="track card-title">{{ track.name }}</h5>
             <h6 class="track card-album">
-              {{ track.album.album_type === "SINGLE" ? "Single:" : "Album:" }}
+              {{
+                track.album.album_type.toLowerCase() === "single"
+                  ? "Single:"
+                  : "Album:"
+              }}
               {{ track.album.name }}
             </h6>
             <p>

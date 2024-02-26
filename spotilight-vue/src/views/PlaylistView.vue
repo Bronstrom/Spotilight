@@ -1,16 +1,16 @@
 <template>
   <div class="playlist">
-    <ListPlaylists />
+    <ListPlaylistTracks v-bind:playlistID="$route.params.id" />
   </div>
 </template>
 
 <script>
-import ListPlaylists from "@/components/ListPlaylists.vue";
+import ListPlaylistTracks from "../components/ListPlaylistTracks.vue";
 
 export default {
   name: "PlaylistView",
   components: {
-    ListPlaylists,
+    ListPlaylistTracks,
   },
 };
 </script>
