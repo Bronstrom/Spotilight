@@ -1,8 +1,27 @@
 <template>
   <div class="top-genres m-5">
     <h3>Top Genres</h3>
-    <div class="chart container" style="height: 40vh; width: 80vw">
-      <canvas id="pieChart"></canvas>
+    <div class="chart container" style="height: 60vh; width: 100vw">
+      <Doughnut
+        v-if="loaded"
+        id="top-genres"
+        :data="chartDataGenres"
+        :options="chartOptionsGenres"
+      />
+    </div>
+    <p>Top Genre:</p>
+    <p>
+      You've listened to
+      <!--{{ userGenreCount.total }} genres in the past
+      {{ timeRange }}-->
+    </p>
+    <div class="chart container" style="height: 60vh; width: 100vw">
+      <Doughnut
+        v-if="loaded"
+        id="top-subgenres"
+        :data="chartDataSubgenres"
+        :options="chartOptionsSubgenres"
+      />
     </div>
     <div class="dropdown">
       <button
@@ -64,7 +83,7 @@
         class="genre col"
         v-for="(
           spotifyGenre, spotifyGenreCount
-        ) in spotifyCatagoryGenreCountCurrent"
+        ) in spotifyCategoryGenreCountCurrent"
         v-bind:key="spotifyGenre"
       >
         <div class="genre card h-100">
@@ -88,7 +107,18 @@
 <script>
 import axios from "axios";
 import cookie from "js-cookie";
-import Chart from "chart.js/auto";
+//import Chart from "chart.js/auto";
+import { Doughnut } from "vue-chartjs";
+import {
+  Chart as ChartJS,
+  Title,
+  Tooltip,
+  Legend,
+  ArcElement,
+  CategoryScale,
+} from "chart.js";
+
+ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
 //const BACK_END_URL = "http://localhost:5000";
 const TOP_COUNT = 50;
@@ -102,36 +132,53 @@ function getHeader() {
 
 export default {
   name: "TopGenres",
+  components: { Doughnut },
   data() {
     return {
       userGenreCountShort: [],
-      spotifyCatagoryGenreCountShort: [],
-
+      spotifyCategoryGenreCountShort: [],
       userGenreCountMedium: [],
-      spotifyCatagoryGenreCountMedium: [],
-
+      spotifyCategoryGenreCountMedium: [],
       userGenreCountLong: [],
-      spotifyCatagoryGenreCountLong: [],
-
-      userGenreCountCurrent: [],
-      spotifyCatagoryGenreCountCurrent: [],
+      spotifyCategoryGenreCountLong: [],
+      userGenreCountCurrent: {},
+      spotifyCategoryGenreCountCurrent: {},
 
       timeRange: "Medium Term",
-    };
-  },
-  mounted() {
-    const chartEl = document.getElementById("pieChart");
 
-    if (this.spotifyCatagoryGenreCountCurrent?.length > 0) {
-      new Chart(chartEl, {
-        type: "pie",
-        data: {
-          labels: Object.keys(this.spotifyCatagoryGenreCountCurrent),
+      chartDataGenres: {
+        labels: null,
+        datasets: null,
+        loaded: false,
+      },
+      chartOptionsGenres: {
+        cutoutPercentage: 20,
+        rotation: Math.PI,
+        animation: {
+          animateScale: true,
+        },
+        responsive: true,
+      },
+      chartDataSubgenres: {
+        labels: null,
+        datasets: null,
+        loaded: false,
+      },
+      chartOptionsSubgenres: {
+        cutoutPercentage: 20,
+        rotation: Math.PI,
+        animation: {
+          animateScale: true,
+        },
+        responsive: true,
+      },
+      /*data: {
+          labels: Object.keys(this.spotifyCategoryGenreCountCurrent),
           datasets: [
             {
               label: "Points",
               backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
-              data: Object.values(this.spotifyCatagoryGenreCountCurrent),
+              data: Object.values(this.spotifyCategoryGenreCountCurrent),
             },
           ],
         },
@@ -141,9 +188,8 @@ export default {
           animation: {
             animateScale: true,
           },
-        },
-      });
-    }
+        },*/
+    };
   },
   methods: {
     async getTopGenres() {
@@ -169,14 +215,34 @@ export default {
         headers: getHeader(),
       })
         .then((res) => {
+          console.log(res.data);
           const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
             res.data.items,
             spotifyGenreList
           );
           this.userGenreCountMedium = userGenres;
-          this.spotifyCatagoryGenreCountMedium = spotifyGenres;
           this.userGenreCountCurrent = userGenres;
-          this.spotifyCatagoryGenreCountCurrent = spotifyGenres;
+          this.spotifyCategoryGenreCountMedium = spotifyGenres;
+          this.spotifyCategoryGenreCountCurrent = spotifyGenres;
+          this.chartDataGenres = {
+            labels: Object.keys(spotifyGenres),
+            datasets: [
+              {
+                data: Object.values(spotifyGenres),
+                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              },
+            ],
+          };
+          this.chartDataSubgenres = {
+            labels: Object.keys(userGenres),
+            datasets: [
+              {
+                data: Object.values(userGenres),
+                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              },
+            ],
+          };
+          this.loaded = true;
         })
         .catch((err) => {
           console.error(err);
@@ -193,7 +259,7 @@ export default {
             spotifyGenreList
           );
           this.userGenreCountShort = userGenres;
-          this.spotifyCatagoryGenreCountShort = spotifyGenres;
+          this.spotifyCategoryGenreCountShort = spotifyGenres;
         })
         .catch((err) => {
           console.error(err);
@@ -205,12 +271,13 @@ export default {
         headers: getHeader(),
       })
         .then((res) => {
+          console.log(res.data);
           const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
             res.data.items,
             spotifyGenreList
           );
           this.userGenreCountLong = userGenres;
-          this.spotifyCatagoryGenreCountLong = spotifyGenres;
+          this.spotifyCategoryGenreCountLong = spotifyGenres;
         })
         .catch((err) => {
           console.error(err);
@@ -232,13 +299,13 @@ export default {
         });
       });
 
-      let spotifyCatagoryGenreCount = {};
+      let spotifyCategoryGenreCount = {};
 
       // Get the top classification of sub genres provided by artists
       for (const [userGenreKey, userGenreValue] of Object.entries(
         userGenreCount
       )) {
-        let foundCatagoryGenre = false;
+        let foundCategoryGenre = false;
         spotifyGenreList?.genres?.forEach((spotifyGenre, index) => {
           if (this.userGenreMatchSpotifyGenres(userGenreKey, spotifyGenre)) {
             /*console.log(
@@ -247,23 +314,23 @@ export default {
                 ", spotifyGenre: " +
                 spotifyGenre
             );*/
-            foundCatagoryGenre = true;
-            if (spotifyCatagoryGenreCount[spotifyGenre] === undefined) {
-              spotifyCatagoryGenreCount[spotifyGenre] = userGenreValue;
+            foundCategoryGenre = true;
+            if (spotifyCategoryGenreCount[spotifyGenre] === undefined) {
+              spotifyCategoryGenreCount[spotifyGenre] = userGenreValue;
             } else {
-              spotifyCatagoryGenreCount[spotifyGenre] =
-                spotifyCatagoryGenreCount[spotifyGenre] + userGenreValue;
+              spotifyCategoryGenreCount[spotifyGenre] =
+                spotifyCategoryGenreCount[spotifyGenre] + userGenreValue;
             }
           } else if (
-            !foundCatagoryGenre &&
+            !foundCategoryGenre &&
             index === spotifyGenreList.genres.length - 1
           ) {
             //console.log(userGenreKey + " was unclassified");
-            if (spotifyCatagoryGenreCount["unclassified"] === undefined) {
-              spotifyCatagoryGenreCount["unclassified"] = userGenreValue;
+            if (spotifyCategoryGenreCount["unclassified"] === undefined) {
+              spotifyCategoryGenreCount["unclassified"] = userGenreValue;
             } else {
-              spotifyCatagoryGenreCount["unclassified"] =
-                spotifyCatagoryGenreCount["unclassified"] + userGenreValue;
+              spotifyCategoryGenreCount["unclassified"] =
+                spotifyCategoryGenreCount["unclassified"] + userGenreValue;
             }
           }
         });
@@ -275,7 +342,7 @@ export default {
       // matches with indie: "indie rock".contains("indie") - now count +7
       // matches with rock: "indie rock".contains("rock") - now count +7
       // If could not find match put this in unknown list for now
-      return [userGenreCount, spotifyCatagoryGenreCount];
+      return [userGenreCount, spotifyCategoryGenreCount];
     },
     userGenreMatchSpotifyGenres(userGenre, spotifyGenre) {
       const userGenreAltered = userGenre.toLowerCase().replace("-", " ");
@@ -286,19 +353,65 @@ export default {
       switch (range) {
         case "short_term":
           this.userGenreCountCurrent = this.userGenreCountCurrentShort;
-          this.spotifyCatagoryGenreCountCurrent =
-            this.spotifyCatagoryGenreCountShort;
+          this.chartDataGenres = {
+            labels: Object.keys(this.spotifyCategoryGenreCountShort),
+            datasets: [
+              {
+                data: Object.values(this.spotifyCategoryGenreCountShort),
+                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              },
+            ],
+          };
+          this.chartDataSubgenres = {
+            labels: Object.keys(this.userGenreCountShort),
+            datasets: [
+              {
+                data: Object.values(this.userGenreCountShort),
+                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              },
+            ],
+          };
           break;
         case "long_term":
-          this.userGenreCountCurrent = this.userGenreCountCurrentLong;
-          this.spotifyCatagoryGenreCountCurrent =
-            this.spotifyCatagoryGenreCountLong;
+          this.chartDataGenres = {
+            labels: Object.keys(this.spotifyCategoryGenreCountLong),
+            datasets: [
+              {
+                data: Object.values(this.spotifyCategoryGenreCountLong),
+                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              },
+            ],
+          };
+          this.chartDataSubgenres = {
+            labels: Object.keys(this.userGenreCountLong),
+            datasets: [
+              {
+                data: Object.values(this.userGenreCountLong),
+                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              },
+            ],
+          };
           break;
         case "medium_term":
         default:
-          this.userGenreCountCurrent = this.userGenreCountCurrentMedium;
-          this.spotifyCatagoryGenreCountCurrent =
-            this.spotifyCatagoryGenreCountMedium;
+          this.chartDataGenres = {
+            labels: Object.keys(this.spotifyCategoryGenreCountMedium),
+            datasets: [
+              {
+                data: Object.values(this.spotifyCategoryGenreCountMedium),
+                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              },
+            ],
+          };
+          this.chartDataSubgenres = {
+            labels: Object.keys(this.userGenreCountMedium),
+            datasets: [
+              {
+                data: Object.values(this.userGenreCountMedium),
+                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+              },
+            ],
+          };
           break;
       }
     },
