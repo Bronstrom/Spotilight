@@ -3,6 +3,7 @@ import HomeView from "@/views/HomeView.vue";
 import SpotlightView from "@/views/SpotlightView.vue";
 import Login from "@/components/Login.vue";
 import Profile from "@/components/Profile.vue";
+import PlaylistsView from "@/views/PlaylistsView.vue";
 import PlaylistView from "@/views/PlaylistView.vue";
 
 const routes = [
@@ -12,7 +13,12 @@ const routes = [
     component: HomeView,
   },
   {
-    path: "/playlist",
+    path: "/playlists",
+    name: "playlists",
+    component: PlaylistsView,
+  },
+  {
+    path: "/playlist/:id",
     name: "playlist",
     component: PlaylistView,
   },

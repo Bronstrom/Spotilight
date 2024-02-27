@@ -45,6 +45,7 @@
         class="playlist col"
         v-for="(playlist, index) in filterList(sortedPlaylistList)"
         v-bind:key="'playlist' + index"
+        @click="goToPlaylistPage(playlist.id)"
       >
         {{ console.log(playlist) }}
         <div class="playlist card h-100">
@@ -95,7 +96,7 @@ function getHeader() {
 }
 
 export default {
-  name: "ListPlaylists",
+  name: "ListUsersPlaylists",
   data() {
     return {
       filterType: "none",
@@ -184,6 +185,9 @@ export default {
     },
     filterPrivateOnly(list) {
       return list.filter((item) => item.public === false);
+    },
+    goToPlaylistPage(playlistID) {
+      window.location.href = `/playlist/${playlistID}`;
     },
   },
   created() {
