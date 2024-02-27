@@ -1,28 +1,5 @@
 <template>
   <div class="top-genres m-5">
-    <h3>Top Genres</h3>
-    <div class="chart container" style="height: 60vh; width: 100vw">
-      <Doughnut
-        v-if="loaded"
-        id="top-genres"
-        :data="chartDataGenres"
-        :options="chartOptionsGenres"
-      />
-    </div>
-    <p>Top Genre:</p>
-    <p>
-      You've listened to
-      <!--{{ userGenreCount.total }} genres in the past
-      {{ timeRange }}-->
-    </p>
-    <div class="chart container" style="height: 60vh; width: 100vw">
-      <Doughnut
-        v-if="loaded"
-        id="top-subgenres"
-        :data="chartDataSubgenres"
-        :options="chartOptionsSubgenres"
-      />
-    </div>
     <div class="dropdown">
       <button
         class="btn btn-primary dropdown-toggle"
@@ -51,55 +28,37 @@
         >
       </div>
     </div>
-    <h4>Specifics</h4>
-    <div
-      class="genre row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
-    >
-      <div
-        class="genre col"
-        v-for="(userGenre, userGenreCount) in userGenreCountCurrent"
-        v-bind:key="userGenre"
-      >
-        <div class="genre card h-100">
-          {{ console.log(userGenre) }}
-          <!--<img
-            class="genre card-image"
-            :src="userGenre.images[0].url"
-            :alt="userGenre + ' album cover'"
-          />-->
-          <div class="genre card-body">
-            <h5 class="genre card-title">
-              {{ userGenre + " " + userGenreCount }}
-            </h5>
-          </div>
-        </div>
-      </div>
+    <div class="chart container">
+      <h3>Top Genres</h3>
+      <Doughnut
+        v-if="chartloaded"
+        id="top-genres"
+        :data="chartDataGenres"
+        :options="chartOptionsGenres"
+      />
+      <p>
+        You've listened to {{ spotifyCategoryGenreCountCurrent?.keys?.[0] }} the
+        most.
+      </p>
+      <p>
+        You've listened to
+        {{ spotifyCategoryGenreCountCurrent?.keys?.length }} genres in the past
+        {{ timeRange }}.
+      </p>
     </div>
-    <h4>Catagories</h4>
-    <div
-      class="genre row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
-    >
-      <div
-        class="genre col"
-        v-for="(
-          spotifyGenre, spotifyGenreCount
-        ) in spotifyCategoryGenreCountCurrent"
-        v-bind:key="spotifyGenre"
-      >
-        <div class="genre card h-100">
-          {{ console.log(spotifyGenre) }}
-          <!--<img
-            class="genre card-image"
-            :src="spotifyGenre.images[0].url"
-            :alt="spotifyGenre + ' album cover'"
-          />-->
-          <div class="genre card-body">
-            <h5 class="genre card-title">
-              {{ spotifyGenre + " " + spotifyGenreCount }}
-            </h5>
-          </div>
-        </div>
-      </div>
+    <div class="chart container">
+      <h3>Top Sub-Genre:</h3>
+      <Doughnut
+        v-if="chartloaded"
+        id="top-subgenres"
+        :data="chartDataSubgenres"
+        :options="chartOptionsSubgenres"
+      />
+      <p>You've listened to {{ userGenreCountCurrent?.keys?.[0] }} the most.</p>
+      <p>
+        You've listened to {{ userGenreCountCurrent?.keys?.length }} genres in
+        the past {{ timeRange }}.
+      </p>
     </div>
   </div>
 </template>
@@ -135,6 +94,10 @@ export default {
   components: { Doughnut },
   data() {
     return {
+      originalGenresShort: [],
+      originalGenresMedium: [],
+      originalGenresLong: [],
+
       userGenreCountShort: [],
       spotifyCategoryGenreCountShort: [],
       userGenreCountMedium: [],
@@ -145,11 +108,12 @@ export default {
       spotifyCategoryGenreCountCurrent: {},
 
       timeRange: "Medium Term",
+      label: ["Count"],
+      backgroundColor: ["#e4cff6", "#ecc5ae", "#c6f1c8"],
 
       chartDataGenres: {
         labels: null,
         datasets: null,
-        loaded: false,
       },
       chartOptionsGenres: {
         cutoutPercentage: 20,
@@ -162,7 +126,6 @@ export default {
       chartDataSubgenres: {
         labels: null,
         datasets: null,
-        loaded: false,
       },
       chartOptionsSubgenres: {
         cutoutPercentage: 20,
@@ -172,27 +135,152 @@ export default {
         },
         responsive: true,
       },
-      /*data: {
-          labels: Object.keys(this.spotifyCategoryGenreCountCurrent),
-          datasets: [
-            {
-              label: "Points",
-              backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
-              data: Object.values(this.spotifyCategoryGenreCountCurrent),
-            },
-          ],
-        },
-        options: {
-          cutoutPercentage: 33,
-          rotation: Math.PI,
-          animation: {
-            animateScale: true,
-          },
-        },*/
+
+      chartloaded: false,
     };
   },
   methods: {
     async getTopGenres() {
+      // This genre list is generated from Spotify, plus or minus a few additional
+      this.handleUserTopArtistGenres({
+        genres: [
+          "acoustic",
+          "afrobeat",
+          "alt-rock",
+          "alternative",
+          "ambient",
+          "anime",
+          "black-metal",
+          "bluegrass",
+          "blues",
+          "bossanova",
+          "brazil",
+          "breakbeat",
+          "british",
+          "cantopop",
+          "chicago-house",
+          "children",
+          "chill",
+          "classical",
+          "club",
+          "comedy",
+          "commercial",
+          "country",
+          "dance",
+          "dancehall",
+          "death-metal",
+          "deep-house",
+          "detroit-techno",
+          "disco",
+          "drum-and-bass",
+          "dub",
+          "dubstep",
+          "edm",
+          "electro",
+          "electronic",
+          "emo",
+          "exercise",
+          "flamenco",
+          "folk",
+          "forro",
+          "french",
+          "funk",
+          "garage",
+          "german",
+          "gospel",
+          "goth",
+          "grindcore",
+          "groove",
+          "grunge",
+          "guitar",
+          "happy",
+          "hard-rock",
+          "hardcore",
+          "hardstyle",
+          "heavy-metal",
+          "hip-hop",
+          "holidays",
+          "honky-tonk",
+          "house",
+          "idm",
+          "indian",
+          "indie",
+          "indie-pop",
+          "industrial",
+          "instrumental",
+          "iranian",
+          "j-dance",
+          "j-idol",
+          "j-pop",
+          "j-rock",
+          "jazz",
+          "k-pop",
+          "kids",
+          "latin",
+          "latino",
+          "lo-fi",
+          "malay",
+          "mandopop",
+          "merengue",
+          "metal",
+          "metalcore",
+          "movies",
+          "mpb",
+          "new-age",
+          "new-release",
+          "opera",
+          "pagode",
+          "party",
+          "philippines-opm",
+          "piano",
+          "pop",
+          "pop-film",
+          "post-dubstep",
+          "post-disco",
+          "power-pop",
+          "progressive",
+          "psych-rock",
+          "punk",
+          "punk-rock",
+          "rap",
+          "r-n-b",
+          "r&b",
+          "rainy-day",
+          "reggae",
+          "reggaeton",
+          "rock",
+          "rock-n-roll",
+          "rockabilly",
+          "romance",
+          "sad",
+          "salsa",
+          "samba",
+          "sertanejo",
+          "show-tunes",
+          "singer-songwriter",
+          "ska",
+          "sleep",
+          "songwriter",
+          "soul",
+          "soundtrack",
+          "spanish",
+          "study",
+          "summer",
+          "swedish",
+          "synth-pop",
+          "tango",
+          "techno",
+          "tex-mex",
+          "trance",
+          "traditional",
+          "trip-hop",
+          "turkish",
+          "vocal",
+          "work-out",
+          "world",
+        ],
+      });
+      /* TODO: Consider aquiring genre list instead of creating it from sources
       const spotify_genre_seed_endpoint = `https://api.spotify.com/v1/recommendations/available-genre-seeds`;
       await axios({
         method: "GET",
@@ -205,7 +293,7 @@ export default {
         .catch((err) => {
           console.error(err);
           return null;
-        });
+        });*/
     },
     async handleUserTopArtistGenres(spotifyGenreList) {
       const medium_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&offset=0&limit=${TOP_COUNT}`;
@@ -215,69 +303,240 @@ export default {
         headers: getHeader(),
       })
         .then((res) => {
-          console.log(res.data);
-          const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
-            res.data.items,
-            spotifyGenreList
-          );
-          this.userGenreCountMedium = userGenres;
-          this.userGenreCountCurrent = userGenres;
-          this.spotifyCategoryGenreCountMedium = spotifyGenres;
-          this.spotifyCategoryGenreCountCurrent = spotifyGenres;
-          this.chartDataGenres = {
-            labels: Object.keys(spotifyGenres),
-            datasets: [
-              {
-                data: Object.values(spotifyGenres),
-                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
-              },
-            ],
-          };
-          this.chartDataSubgenres = {
-            labels: Object.keys(userGenres),
-            datasets: [
-              {
-                data: Object.values(userGenres),
-                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
-              },
-            ],
-          };
-          this.loaded = true;
+          //console.log(res.data);
+          this.originalGenresMedium = res.data?.items;
+
+          let limit = TOP_COUNT;
+          let offset = 0;
+          let total = res.data?.total;
+
+          // Aquire all artists till reaching total artist count
+          offset = offset + limit;
+
+          // TODO: Create helper function
+          if (offset >= total) {
+            const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
+              res.data?.items,
+              spotifyGenreList
+            );
+
+            this.userGenreCountMedium = userGenres;
+            this.userGenreCountCurrent = this.sortKeyValuePairsByHighestValue(
+              Object.keys(userGenres),
+              Object.values(userGenres)
+            );
+            userGenres;
+            this.spotifyCategoryGenreCountMedium = spotifyGenres;
+            this.spotifyCategoryGenreCountCurrent =
+              this.sortKeyValuePairsByHighestValue(
+                Object.keys(spotifyGenres),
+                Object.values(spotifyGenres)
+              );
+
+            this.chartDataGenres = {
+              labels: Object.keys(spotifyGenres),
+              datasets: [
+                {
+                  label: this.label,
+                  data: Object.values(spotifyGenres),
+                  backgroundColor: this.backgroundColor,
+                },
+              ],
+            };
+            this.chartDataSubgenres = {
+              labels: Object.keys(userGenres),
+              datasets: [
+                {
+                  label: this.label,
+                  data: Object.values(userGenres),
+                  backgroundColor: this.backgroundColor,
+                },
+              ],
+            };
+            this.chartloaded = true;
+          }
+          for (offset; offset < total; offset = offset + limit) {
+            let artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&offset=${offset}&limit=${TOP_COUNT}`;
+
+            axios({
+              method: "GET",
+              url: artist_endpoint,
+              headers: getHeader(),
+            })
+              .then((res) => {
+                const completeGenreList = [
+                  ...this.originalGenresMedium,
+                  res.data?.items,
+                ];
+                this.originalGenresMedium = completeGenreList;
+
+                // TODO: Create helper function
+                if (offset >= total) {
+                  //console.log(completeGenreList);
+                  const [userGenres, spotifyGenres] =
+                    this.compileListOfTopGenres(
+                      completeGenreList,
+                      spotifyGenreList
+                    );
+                  this.userGenreCountMedium = userGenres;
+                  this.userGenreCountCurrent =
+                    this.sortKeyValuePairsByHighestValue(
+                      Object.keys(userGenres),
+                      Object.values(userGenres)
+                    );
+                  userGenres;
+                  this.spotifyCategoryGenreCountMedium = spotifyGenres;
+                  this.spotifyCategoryGenreCountCurrent =
+                    this.sortKeyValuePairsByHighestValue(
+                      Object.keys(spotifyGenres),
+                      Object.values(spotifyGenres)
+                    );
+
+                  this.chartDataGenres = {
+                    labels: Object.keys(spotifyGenres),
+                    datasets: [
+                      {
+                        label: this.label,
+                        data: Object.values(spotifyGenres),
+                        backgroundColor: this.backgroundColor,
+                      },
+                    ],
+                  };
+                  this.chartDataSubgenres = {
+                    labels: Object.keys(userGenres),
+                    datasets: [
+                      {
+                        label: this.label,
+                        data: Object.values(userGenres),
+                        backgroundColor: this.backgroundColor,
+                      },
+                    ],
+                  };
+                  this.chartloaded = true;
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          }
         })
         .catch((err) => {
           console.error(err);
         });
       const short_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=short_term&offset=0&limit=${TOP_COUNT}`;
-      axios({
+      await axios({
         method: "GET",
         url: short_term_artist_endpoint,
         headers: getHeader(),
       })
         .then((res) => {
-          const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
-            res.data.items,
-            spotifyGenreList
-          );
-          this.userGenreCountShort = userGenres;
-          this.spotifyCategoryGenreCountShort = spotifyGenres;
+          this.originalGenresShort = res.data?.items;
+
+          let limit = TOP_COUNT;
+          let offset = 0;
+          let total = res.data?.total;
+
+          // Aquire all artists till reaching total artist count
+          offset = offset + limit;
+
+          // TODO: Create helper function
+          if (offset >= total) {
+            const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
+              res.data?.items,
+              spotifyGenreList
+            );
+            this.userGenreCountShort = userGenres;
+            this.spotifyCategoryGenreCountShort = spotifyGenres;
+          }
+          for (offset; offset < total; offset = offset + limit) {
+            let artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=short_term&offset=${offset}&limit=${TOP_COUNT}`;
+
+            axios({
+              method: "GET",
+              url: artist_endpoint,
+              headers: getHeader(),
+            })
+              .then((res) => {
+                const completeGenreList = [
+                  ...this.originalGenresShort,
+                  res.data?.items,
+                ];
+                this.originalGenresShort = completeGenreList;
+
+                // TODO: Create helper function
+                if (offset >= total) {
+                  const [userGenres, spotifyGenres] =
+                    this.compileListOfTopGenres(
+                      completeGenreList,
+                      spotifyGenreList
+                    );
+                  this.userGenreCountShort = userGenres;
+                  this.spotifyCategoryGenreCountShort = spotifyGenres;
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          }
         })
         .catch((err) => {
           console.error(err);
         });
       const long_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=long_term&offset=0&limit=${TOP_COUNT}`;
-      axios({
+      await axios({
         method: "GET",
         url: long_term_artist_endpoint,
         headers: getHeader(),
       })
         .then((res) => {
-          console.log(res.data);
-          const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
-            res.data.items,
-            spotifyGenreList
-          );
-          this.userGenreCountLong = userGenres;
-          this.spotifyCategoryGenreCountLong = spotifyGenres;
+          this.originalGenresLong = res.data?.items;
+
+          let limit = TOP_COUNT;
+          let offset = 0;
+          let total = res.data?.total;
+
+          // Aquire all artists till reaching total artist count
+          offset = offset + limit;
+
+          // TODO: Create helper function
+          if (offset >= total) {
+            const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
+              res.data?.items,
+              spotifyGenreList
+            );
+            this.userGenreCountLong = userGenres;
+            this.spotifyCategoryGenreCountLong = spotifyGenres;
+          }
+          for (offset; offset < total; offset = offset + limit) {
+            let artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=long_term&offset=${offset}&limit=${TOP_COUNT}`;
+
+            axios({
+              method: "GET",
+              url: artist_endpoint,
+              headers: getHeader(),
+            })
+              .then((res) => {
+                const completeGenreList = [
+                  ...this.originalGenresLong,
+                  res.data?.items,
+                ];
+                this.originalGenresLong = completeGenreList;
+
+                // TODO: Create helper function
+                if (offset >= total) {
+                  const [userGenres, spotifyGenres] =
+                    this.compileListOfTopGenres(
+                      completeGenreList,
+                      spotifyGenreList
+                    );
+                  this.userGenreCountLong = userGenres;
+                  this.spotifyCategoryGenreCountLong = spotifyGenres;
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          }
         })
         .catch((err) => {
           console.error(err);
@@ -349,66 +608,124 @@ export default {
       const spotifyGenreAltered = spotifyGenre.toLowerCase().replace("-", " ");
       return userGenreAltered.includes(spotifyGenreAltered);
     },
+    sortKeyValuePairsByHighestValue(keys, values) {
+      const keyPairDict = keys.map((prevKey, index) => {
+        return {
+          key: prevKey,
+          value: values[index] || 0,
+        };
+      });
+
+      const sortedDict = keyPairDict.sort((a, b) => {
+        return b.value - a.value;
+      });
+
+      let sortedKeys = [];
+      let sortedValues = [];
+      sortedDict.forEach((item) => {
+        sortedKeys.push(item.key);
+        sortedValues.push(item.value);
+      });
+
+      return { keys: sortedKeys, values: sortedValues };
+    },
     changeTimeRange(range) {
+      const spotifyCountShort = this.sortKeyValuePairsByHighestValue(
+        Object.keys(this.spotifyCategoryGenreCountShort),
+        Object.values(this.spotifyCategoryGenreCountShort)
+      );
+      const userCountShort = this.sortKeyValuePairsByHighestValue(
+        Object.keys(this.userGenreCountShort),
+        Object.values(this.userGenreCountShort)
+      );
+      const spotifyCountLong = this.sortKeyValuePairsByHighestValue(
+        Object.keys(this.spotifyCategoryGenreCountLong),
+        Object.values(this.spotifyCategoryGenreCountLong)
+      );
+      const userCountLong = this.sortKeyValuePairsByHighestValue(
+        Object.keys(this.userGenreCountLong),
+        Object.values(this.userGenreCountLong)
+      );
+      const spotifyCountMedium = this.sortKeyValuePairsByHighestValue(
+        Object.keys(this.spotifyCategoryGenreCountMedium),
+        Object.values(this.spotifyCategoryGenreCountMedium)
+      );
+      const userCountMedium = this.sortKeyValuePairsByHighestValue(
+        Object.keys(this.userGenreCountMedium),
+        Object.values(this.userGenreCountMedium)
+      );
+      console.log(this.spotifyCategoryGenreCountLong);
+      console.log(this.userGenreCountLong);
       switch (range) {
         case "short_term":
-          this.userGenreCountCurrent = this.userGenreCountCurrentShort;
+          this.userGenreCountCurrent = userCountShort;
+          this.spotifyCategoryGenreCountCurrent = spotifyCountShort;
           this.chartDataGenres = {
-            labels: Object.keys(this.spotifyCategoryGenreCountShort),
+            labels: spotifyCountShort.keys,
             datasets: [
               {
-                data: Object.values(this.spotifyCategoryGenreCountShort),
-                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+                label: this.label,
+                data: spotifyCountShort.values,
+                backgroundColor: this.backgroundColor,
               },
             ],
           };
           this.chartDataSubgenres = {
-            labels: Object.keys(this.userGenreCountShort),
+            labels: userCountShort.keys,
             datasets: [
               {
-                data: Object.values(this.userGenreCountShort),
-                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+                label: this.label,
+                data: userCountShort.values,
+                backgroundColor: this.backgroundColor,
               },
             ],
           };
           break;
         case "long_term":
+          this.userGenreCountCurrent = userCountLong;
+          this.spotifyCategoryGenreCountCurrent = spotifyCountLong;
           this.chartDataGenres = {
-            labels: Object.keys(this.spotifyCategoryGenreCountLong),
+            labels: spotifyCountLong.keys,
             datasets: [
               {
-                data: Object.values(this.spotifyCategoryGenreCountLong),
-                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+                label: this.label,
+                data: spotifyCountLong.values,
+                backgroundColor: this.backgroundColor,
               },
             ],
           };
           this.chartDataSubgenres = {
-            labels: Object.keys(this.userGenreCountLong),
+            labels: userCountLong.keys,
             datasets: [
               {
-                data: Object.values(this.userGenreCountLong),
-                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+                label: this.label,
+                data: userCountLong.values,
+                backgroundColor: this.backgroundColor,
               },
             ],
           };
           break;
         case "medium_term":
         default:
+          this.userGenreCountCurrent = userCountMedium;
+          this.spotifyCategoryGenreCountCurrent = spotifyCountMedium;
           this.chartDataGenres = {
-            labels: Object.keys(this.spotifyCategoryGenreCountMedium),
+            labels: spotifyCountMedium.keys,
             datasets: [
               {
-                data: Object.values(this.spotifyCategoryGenreCountMedium),
-                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+                label: this.label,
+                data: spotifyCountMedium.values,
+                backgroundColor: this.backgroundColor,
               },
             ],
           };
           this.chartDataSubgenres = {
-            labels: Object.keys(this.userGenreCountMedium),
+            labels: userCountMedium.keys,
             datasets: [
               {
-                data: Object.values(this.userGenreCountMedium),
-                backgroundColor: ["#f1c40f", "#e67e22", "#16a085"],
+                label: this.label,
+                data: userCountMedium.values,
+                backgroundColor: this.backgroundColor,
               },
             ],
           };
