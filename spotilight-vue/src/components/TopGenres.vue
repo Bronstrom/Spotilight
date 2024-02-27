@@ -37,13 +37,10 @@
         :options="chartOptionsGenres"
       />
       <p>
-        You've listened to {{ spotifyCategoryGenreCountCurrent?.keys?.[0] }} the
-        most.
-      </p>
-      <p>
         You've listened to
-        {{ spotifyCategoryGenreCountCurrent?.keys?.length }} genres in the past
-        {{ timeRange }}.
+        {{ spotifyCategoryGenreCountCurrent?.keys?.length }} genre(s) in the
+        past {{ timeRange }}, with
+        {{ spotifyCategoryGenreCountCurrent?.keys?.[0] }} at the top.
       </p>
     </div>
     <div class="chart container">
@@ -54,10 +51,10 @@
         :data="chartDataSubgenres"
         :options="chartOptionsSubgenres"
       />
-      <p>You've listened to {{ userGenreCountCurrent?.keys?.[0] }} the most.</p>
       <p>
-        You've listened to {{ userGenreCountCurrent?.keys?.length }} genres in
-        the past {{ timeRange }}.
+        You've listened to
+        {{ userGenreCountCurrent?.keys?.length }} sub-genre(s) in the past
+        {{ timeRange }}, with {{ userGenreCountCurrent?.keys?.[0] }} at the top.
       </p>
     </div>
   </div>
