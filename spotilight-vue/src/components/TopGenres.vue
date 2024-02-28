@@ -37,10 +37,7 @@
         :options="chartOptionsGenres"
       />
       <p>
-        You've listened to
-        {{ spotifyCategoryGenreCountCurrent?.keys?.length }} genre(s) in the
-        past {{ timeRange }}, with
-        {{ spotifyCategoryGenreCountCurrent?.keys?.[0] }} at the top.
+        {{ genreDebrief(spotifyCategoryGenreCountCurrent, "genre") }}
       </p>
     </div>
     <div class="chart container">
@@ -52,9 +49,7 @@
         :options="chartOptionsSubgenres"
       />
       <p>
-        You've listened to
-        {{ userGenreCountCurrent?.keys?.length }} sub-genre(s) in the past
-        {{ timeRange }}, with {{ userGenreCountCurrent?.keys?.[0] }} at the top.
+        {{ genreDebrief(userGenreCountCurrent, "sub-genre") }}
       </p>
     </div>
   </div>
@@ -137,6 +132,24 @@ export default {
     };
   },
   methods: {
+    genreDebrief(currentList, genreType) {
+      let period;
+      switch (this.timeRange) {
+        case "Short Term":
+          period = "four weeks";
+          break;
+        case "Medium Term":
+          period = "six months";
+          break;
+        case "Long Term":
+          period = "over a year";
+          break;
+      }
+
+      return `You've listened to
+        ${currentList?.keys?.length} ${genreType}(s) in the
+        past ${period}, with ${currentList?.keys?.[0]} at the top.`;
+    },
     async getTopGenres() {
       // This genre list is generated from Spotify, plus or minus a few additional
       this.handleUserTopArtistGenres({
