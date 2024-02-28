@@ -1,42 +1,80 @@
 <template>
   <div class="top-playlists m-5">
     <h3>List Playlists</h3>
-    <div>
-      <button type="button" @click="sortNewestFirst()" class="btn btn-primary">
-        Newest First
+    <div class="sort-playlists m-2">
+      <p>Sort</p>
+      <button
+        class="btn btn-primary dropdown-toggle"
+        type="button"
+        id="sort-playlists-dropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        {{ sortLabel }}
       </button>
-      <button type="button" @click="sortOldestFirst()" class="btn btn-primary">
-        Oldest First
-      </button>
-      <button type="button" @click="sortAlphAsc()" class="btn btn-primary">
-        ASC sort
-      </button>
-      <button type="button" @click="sortAlphDesc()" class="btn btn-primary">
-        DESC sort
-      </button>
+      <div class="dropdown-menu" aria-labelledby="sort-playlists-dropdown">
+        <a
+          class="dropdown-item"
+          @click="(sortLabel = 'Newest First'), sortNewestFirst()"
+          >Newest First</a
+        >
+        <a
+          class="dropdown-item"
+          @click="(sortLabel = 'Oldest First'), sortOldestFirst()"
+          >Oldest First</a
+        >
+        <a
+          class="dropdown-item"
+          @click="(sortLabel = 'Title Ascending'), sortAlphAsc()"
+          >Title Ascending</a
+        >
+        <a
+          class="dropdown-item"
+          @click="(sortLabel = 'Title Descending'), sortAlphDesc()"
+          >Title Descending</a
+        >
+        <a class="dropdown-item" @click="(sortLabel = 'Owner'), sortByOwner()"
+          >Owner</a
+        >
+        <a
+          class="dropdown-item"
+          @click="(sortLabel = 'Total Tracks'), sortBytotalTracks()"
+          >Total Tracks</a
+        >
+      </div>
     </div>
-    <div>
+    <div class="filter-playlists m-2">
+      <p>Filter</p>
       <button
+        class="btn btn-primary dropdown-toggle"
         type="button"
-        @click="filterType = 'none'"
-        class="btn btn-primary"
+        id="filter-playlists-dropdown"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
       >
-        No filter
+        {{ filterLabel }}
       </button>
-      <button
-        type="button"
-        @click="filterType = 'public'"
-        class="btn btn-primary"
-      >
-        Public Only filter
-      </button>
-      <button
-        type="button"
-        @click="filterType = 'private'"
-        class="btn btn-primary"
-      >
-        Private Only filter
-      </button>
+      <div class="dropdown-menu" aria-labelledby="filter-playlists-dropdown">
+        <a
+          class="dropdown-item"
+          @click="(filterLabel = 'No Filter'), (filterType = 'none')"
+          >No Filter</a
+        >
+        <a
+          class="dropdown-item"
+          @click="
+            (filterLabel = 'Public Playlists Only'), (filterType = 'public')
+          "
+          >Public Playlists Only</a
+        >
+        <a
+          class="dropdown-item"
+          @click="
+            (filterLabel = 'Private Playlists Only'), (filterType = 'private')
+          "
+          >Private Playlists Only</a
+        >
+      </div>
     </div>
     <div
       class="playlist row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
@@ -99,6 +137,7 @@ export default {
   name: "ListUsersPlaylists",
   data() {
     return {
+      sortLabel: null,
       filterType: "none",
       originalPlaylistsList: null,
       sortedPlaylistList: null,
@@ -141,6 +180,7 @@ export default {
                   ...this.originalPlaylistsList,
                   ...res.data?.items,
                 ];
+                this.sortLabel = "Newest First";
                 this.sortNewestFirst();
               })
               .catch((err) => {
@@ -171,6 +211,16 @@ export default {
         b.name.localeCompare(a.name)
       );
     },
+    sortByOwner() {
+      this.sortedPlaylistList = [...this.originalPlaylistsList].sort((a, b) =>
+        a.owner.display_name.localeCompare(b.owner.display_name)
+      );
+    },
+    sortBytotalTracks() {
+      this.sortedPlaylistList = [...this.originalPlaylistsList].sort(
+        (a, b) => b.tracks.total - a.tracks.total
+      );
+    },
     filterList(list) {
       if (this.filterType === "none") {
         return this.sortedPlaylistList;
@@ -192,6 +242,7 @@ export default {
   },
   created() {
     this.aquireAllPlaylists();
+    this.filterLabel = "No Filter";
   },
 };
 </script>
