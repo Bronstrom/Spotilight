@@ -292,6 +292,43 @@ export default {
           return null;
         });*/
     },
+    compileAndSetFinalGenreLists(artistList, genreList) {
+      const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
+        artistList,
+        genreList
+      );
+      const userCount = this.sortKeyValuePairsByHighestValue(
+        Object.keys(userGenres),
+        Object.values(userGenres)
+      );
+      const spotifyCount = this.sortKeyValuePairsByHighestValue(
+        Object.keys(spotifyGenres),
+        Object.values(spotifyGenres)
+      );
+      return [userCount, spotifyCount];
+    },
+    setPieChartData(genres, subgenres) {
+      this.chartDataGenres = {
+        labels: genres.keys,
+        datasets: [
+          {
+            label: this.label,
+            data: genres.values,
+            backgroundColor: this.backgroundColor,
+          },
+        ],
+      };
+      this.chartDataSubgenres = {
+        labels: subgenres.keys,
+        datasets: [
+          {
+            label: this.label,
+            data: subgenres.values,
+            backgroundColor: this.backgroundColor,
+          },
+        ],
+      };
+    },
     async handleUserTopArtistGenres(spotifyGenreList) {
       const medium_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&offset=0&limit=${TOP_COUNT}`;
       await axios({
@@ -312,43 +349,16 @@ export default {
 
           // TODO: Create helper function
           if (offset >= total) {
-            const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
-              res.data?.items,
-              spotifyGenreList
-            );
-
-            const spotifyCountMedium = this.sortKeyValuePairsByHighestValue(
-              Object.keys(spotifyGenres),
-              Object.values(spotifyGenres)
-            );
-            const userCountMedium = this.sortKeyValuePairsByHighestValue(
-              Object.keys(userGenres),
-              Object.values(userGenres)
-            );
+            const [userCountMedium, spotifyCountMedium] =
+              this.compileAndSetFinalGenreLists(
+                res.data?.items,
+                spotifyGenreList
+              );
             this.userGenreCountMedium = userCountMedium;
             this.userGenreCountCurrent = userCountMedium;
             this.spotifyCategoryGenreCountMedium = spotifyCountMedium;
             this.spotifyCategoryGenreCountCurrent = spotifyCountMedium;
-            this.chartDataGenres = {
-              labels: spotifyCountMedium.keys,
-              datasets: [
-                {
-                  label: this.label,
-                  data: spotifyCountMedium.values,
-                  backgroundColor: this.backgroundColor,
-                },
-              ],
-            };
-            this.chartDataSubgenres = {
-              labels: userCountMedium.keys,
-              datasets: [
-                {
-                  label: this.label,
-                  data: userCountMedium.values,
-                  backgroundColor: this.backgroundColor,
-                },
-              ],
-            };
+            this.setPieChartData(spotifyCountMedium, userCountMedium);
             this.chartloaded = true;
           }
           for (offset; offset < total; offset = offset + limit) {
@@ -368,45 +378,16 @@ export default {
 
                 // TODO: Create helper function
                 if (offset >= total) {
-                  //console.log(completeGenreList);
-                  const [userGenres, spotifyGenres] =
-                    this.compileListOfTopGenres(
+                  const [userCountMedium, spotifyCountMedium] =
+                    this.compileAndSetFinalGenreLists(
                       completeGenreList,
                       spotifyGenreList
                     );
-                  const spotifyCountMedium =
-                    this.sortKeyValuePairsByHighestValue(
-                      Object.keys(spotifyGenres),
-                      Object.values(spotifyGenres)
-                    );
-                  const userCountMedium = this.sortKeyValuePairsByHighestValue(
-                    Object.keys(userGenres),
-                    Object.values(userGenres)
-                  );
                   this.userGenreCountMedium = userCountMedium;
                   this.userGenreCountCurrent = userCountMedium;
                   this.spotifyCategoryGenreCountMedium = spotifyCountMedium;
                   this.spotifyCategoryGenreCountCurrent = spotifyCountMedium;
-                  this.chartDataGenres = {
-                    labels: spotifyCountMedium.keys,
-                    datasets: [
-                      {
-                        label: this.label,
-                        data: spotifyCountMedium.values,
-                        backgroundColor: this.backgroundColor,
-                      },
-                    ],
-                  };
-                  this.chartDataSubgenres = {
-                    labels: userCountMedium.keys,
-                    datasets: [
-                      {
-                        label: this.label,
-                        data: userCountMedium.values,
-                        backgroundColor: this.backgroundColor,
-                      },
-                    ],
-                  };
+                  this.setPieChartData(spotifyCountMedium, userCountMedium);
                   this.chartloaded = true;
                 }
               })
@@ -436,19 +417,13 @@ export default {
 
           // TODO: Create helper function
           if (offset >= total) {
-            const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
-              res.data?.items,
-              spotifyGenreList
-            );
-            this.userGenreCountShort = this.sortKeyValuePairsByHighestValue(
-              Object.keys(userGenres),
-              Object.values(userGenres)
-            );
-            this.spotifyCategoryGenreCountShort =
-              this.sortKeyValuePairsByHighestValue(
-                Object.keys(spotifyGenres),
-                Object.values(spotifyGenres)
+            const [userCountShort, spotifyCountShort] =
+              this.compileAndSetFinalGenreLists(
+                res.data?.items,
+                spotifyGenreList
               );
+            this.userGenreCountShort = userCountShort;
+            this.spotifyCategoryGenreCountShort = spotifyCountShort;
           }
           for (offset; offset < total; offset = offset + limit) {
             let artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=short_term&offset=${offset}&limit=${TOP_COUNT}`;
@@ -467,21 +442,13 @@ export default {
 
                 // TODO: Create helper function
                 if (offset >= total) {
-                  const [userGenres, spotifyGenres] =
-                    this.compileListOfTopGenres(
+                  const [userCountShort, spotifyCountShort] =
+                    this.compileAndSetFinalGenreLists(
                       completeGenreList,
                       spotifyGenreList
                     );
-                  this.userGenreCountShort =
-                    this.sortKeyValuePairsByHighestValue(
-                      Object.keys(userGenres),
-                      Object.values(userGenres)
-                    );
-                  this.spotifyCategoryGenreCountShort =
-                    this.sortKeyValuePairsByHighestValue(
-                      Object.keys(spotifyGenres),
-                      Object.values(spotifyGenres)
-                    );
+                  this.userGenreCountShort = userCountShort;
+                  this.spotifyCategoryGenreCountShort = spotifyCountShort;
                 }
               })
               .catch((err) => {
@@ -510,19 +477,13 @@ export default {
 
           // TODO: Create helper function
           if (offset >= total) {
-            const [userGenres, spotifyGenres] = this.compileListOfTopGenres(
-              res.data?.items,
-              spotifyGenreList
-            );
-            this.userGenreCountLong = this.sortKeyValuePairsByHighestValue(
-              Object.keys(userGenres),
-              Object.values(userGenres)
-            );
-            this.spotifyCategoryGenreCountLong =
-              this.sortKeyValuePairsByHighestValue(
-                Object.keys(spotifyGenres),
-                Object.values(spotifyGenres)
+            const [userCountLong, spotifyCountLong] =
+              this.compileAndSetFinalGenreLists(
+                res.data?.items,
+                spotifyGenreList
               );
+            this.userGenreCountLong = userCountLong;
+            this.spotifyCategoryGenreCountLong = spotifyCountLong;
           }
           for (offset; offset < total; offset = offset + limit) {
             let artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=long_term&offset=${offset}&limit=${TOP_COUNT}`;
@@ -541,21 +502,13 @@ export default {
 
                 // TODO: Create helper function
                 if (offset >= total) {
-                  const [userGenres, spotifyGenres] =
-                    this.compileListOfTopGenres(
+                  const [userCountLong, spotifyCountLong] =
+                    this.compileAndSetFinalGenreLists(
                       completeGenreList,
                       spotifyGenreList
                     );
-                  this.userGenreCountLong =
-                    this.sortKeyValuePairsByHighestValue(
-                      Object.keys(userGenres),
-                      Object.values(userGenres)
-                    );
-                  this.spotifyCategoryGenreCountLong =
-                    this.sortKeyValuePairsByHighestValue(
-                      Object.keys(spotifyGenres),
-                      Object.values(spotifyGenres)
-                    );
+                  this.userGenreCountLong = userCountLong;
+                  this.spotifyCategoryGenreCountLong = spotifyCountLong;
                 }
               })
               .catch((err) => {
@@ -665,75 +618,18 @@ export default {
         case "short_term":
           this.userGenreCountCurrent = userCountShort;
           this.spotifyCategoryGenreCountCurrent = spotifyCountShort;
-          this.chartDataGenres = {
-            labels: spotifyCountShort.keys,
-            datasets: [
-              {
-                label: this.label,
-                data: spotifyCountShort.values,
-                backgroundColor: this.backgroundColor,
-              },
-            ],
-          };
-          this.chartDataSubgenres = {
-            labels: userCountShort.keys,
-            datasets: [
-              {
-                label: this.label,
-                data: userCountShort.values,
-                backgroundColor: this.backgroundColor,
-              },
-            ],
-          };
+          this.setPieChartData(spotifyCountShort, userCountShort);
           break;
         case "long_term":
           this.userGenreCountCurrent = userCountLong;
           this.spotifyCategoryGenreCountCurrent = spotifyCountLong;
-          this.chartDataGenres = {
-            labels: spotifyCountLong.keys,
-            datasets: [
-              {
-                label: this.label,
-                data: spotifyCountLong.values,
-                backgroundColor: this.backgroundColor,
-              },
-            ],
-          };
-          this.chartDataSubgenres = {
-            labels: userCountLong.keys,
-            datasets: [
-              {
-                label: this.label,
-                data: userCountLong.values,
-                backgroundColor: this.backgroundColor,
-              },
-            ],
-          };
+          this.setPieChartData(spotifyCountLong, userCountLong);
           break;
         case "medium_term":
         default:
           this.userGenreCountCurrent = userCountMedium;
           this.spotifyCategoryGenreCountCurrent = spotifyCountMedium;
-          this.chartDataGenres = {
-            labels: spotifyCountMedium.keys,
-            datasets: [
-              {
-                label: this.label,
-                data: spotifyCountMedium.values,
-                backgroundColor: this.backgroundColor,
-              },
-            ],
-          };
-          this.chartDataSubgenres = {
-            labels: userCountMedium.keys,
-            datasets: [
-              {
-                label: this.label,
-                data: userCountMedium.values,
-                backgroundColor: this.backgroundColor,
-              },
-            ],
-          };
+          this.setPieChartData(spotifyCountMedium, userCountMedium);
           break;
       }
     },
