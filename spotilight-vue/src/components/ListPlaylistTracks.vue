@@ -55,8 +55,8 @@
       <div
         class="track col"
         v-else
-        v-for="(playlistItem, index) in originalTrackList"
-        v-bind:key="'track' + index"
+        v-for="playlistItem in originalTrackList"
+        v-bind:key="playlistItem.id"
       >
         <!--{{ console.log(playlistItem) }}-->
         <div class="track card h-100">

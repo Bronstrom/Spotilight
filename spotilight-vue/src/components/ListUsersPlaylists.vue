@@ -1,6 +1,15 @@
 <template>
   <div class="top-playlists m-5">
     <h3>List Playlists</h3>
+    <div>
+      <button
+        type="button"
+        @click="selectionMode = !selectionMode"
+        :class="['btn', selectionMode ? 'btn-warning' : 'btn-secondary']"
+      >
+        Selection Mode
+      </button>
+    </div>
     <div class="sort-playlists m-2">
       <p>Sort</p>
       <button
@@ -81,12 +90,23 @@
     >
       <div
         class="playlist col"
-        v-for="(playlist, index) in filterList(sortedPlaylistList)"
-        v-bind:key="'playlist' + index"
-        @click="goToPlaylistPage(playlist.id)"
+        v-for="playlist in filterList(sortedPlaylistList)"
+        v-bind:key="playlist.id"
+        @click="
+          !selectionMode
+            ? goToPlaylistPage(playlist.id)
+            : handleSelection(playlist.id)
+        "
       >
-        {{ console.log(playlist) }}
-        <div class="playlist card h-100">
+        <!--{{ console.log(playlist) }}-->
+        <div
+          class="playlist card h-100"
+          :style="{
+            'background-color': selectedItems.includes(playlist.id)
+              ? 'orange'
+              : 'white',
+          }"
+        >
           <img
             class="playlist card-image"
             v-if="playlist.images?.length > 0"
@@ -137,6 +157,8 @@ export default {
   name: "ListUsersPlaylists",
   data() {
     return {
+      selectedItems: [],
+      selectionMode: false,
       sortLabel: null,
       filterType: "none",
       originalPlaylistsList: null,
@@ -144,7 +166,27 @@ export default {
       filtedPlaylistList: null,
     };
   },
+  watch: {
+    selectionMode: function (val) {
+      if (!val) {
+        this.selectedItems = [];
+      }
+    },
+  },
   methods: {
+    handleSelection(id) {
+      let selection = this.selectedItems;
+      // Add item to selection list if it isn't already in there
+      if (!selection.includes(id)) {
+        this.selectedItems = [...selection, id];
+      }
+      // Remove item from selection list if it's already within the list
+      else {
+        const idIndex = selection.indexOf(id);
+        selection.splice(idIndex, 1);
+        this.selectedItems = selection;
+      }
+    },
     /* TODO: This method currently gets all of the user's playlists. It would probably be a good idea to limit
           this to some extent. A user can have a ton of playlists, and this could be expensive on the api
           having to chain together so many of these calls. Potentially a "Show more" button could be included
