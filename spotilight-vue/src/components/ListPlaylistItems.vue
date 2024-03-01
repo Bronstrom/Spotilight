@@ -1,0 +1,323 @@
+<template>
+  <div>
+    <button
+      type="button"
+      @click="selectionMode = !selectionMode"
+      :class="['btn', selectionMode ? 'btn-warning' : 'btn-secondary']"
+    >
+      Selection Mode
+    </button>
+  </div>
+  <div class="sort-playlists m-2">
+    <p>Sort</p>
+    <button
+      class="btn btn-primary dropdown-toggle"
+      type="button"
+      id="sort-playlists-dropdown"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      {{ sortLabel }}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="sort-playlists-dropdown">
+      <a
+        v-if="playlistItemType === 'track'"
+        class="dropdown-item"
+        @click="sortUnsorted"
+        >Unsorted (User organized)</a
+      >
+      <a class="dropdown-item" @click="sortNewestFirst">Newest First</a>
+      <a class="dropdown-item" @click="sortOldestFirst">Oldest First</a>
+      <a class="dropdown-item" @click="sortAlphAsc">Title Ascending</a>
+      <a class="dropdown-item" @click="sortAlphDesc">Title Descending</a>
+      <template v-if="playlistItemType === 'playlist'">
+        <a class="dropdown-item" @click="sortByOwner">Owner</a>
+        <a class="dropdown-item" @click="sortByTotalTracks">Total Tracks</a>
+      </template>
+      <template v-if="playlistItemType === 'track'">
+        <a class="dropdown-item" @click="sortByArtist">Lead Artist</a>
+      </template>
+    </div>
+  </div>
+  <div class="filter-playlists m-2">
+    <p>Filter</p>
+    <button
+      class="btn btn-primary dropdown-toggle"
+      type="button"
+      id="filter-playlists-dropdown"
+      data-bs-toggle="dropdown"
+      aria-expanded="false"
+    >
+      {{ filterLabel }}
+    </button>
+    <div class="dropdown-menu" aria-labelledby="filter-playlists-dropdown">
+      <a
+        class="dropdown-item"
+        @click="(filterLabel = 'No Filter'), (filterType = 'none')"
+        >No Filter</a
+      >
+      <template v-if="playlistItemType === 'playlist'">
+        <a
+          class="dropdown-item"
+          @click="
+            (filterLabel = 'Public Playlists Only'), (filterType = 'public')
+          "
+          >Public Playlists Only</a
+        >
+        <a
+          class="dropdown-item"
+          @click="
+            (filterLabel = 'Private Playlists Only'), (filterType = 'private')
+          "
+          >Private Playlists Only</a
+        >
+      </template>
+      <template v-if="playlistItemType === 'track'">
+        <a
+          class="dropdown-item"
+          @click="
+            (filterLabel = 'No Local Files Only'), (filterType = 'no-local')
+          "
+          >No Local Files Only</a
+        >
+        <a
+          class="dropdown-item"
+          @click="(filterLabel = 'Local Files Only'), (filterType = 'local')"
+          >Local Files Only</a
+        >
+        <a
+          class="dropdown-item"
+          @click="
+            (filterLabel = 'No Explicits Only'), (filterType = 'no-explicit')
+          "
+          >No Explicits Only</a
+        >
+        <a
+          class="dropdown-item"
+          @click="(filterLabel = 'Explicits Only'), (filterType = 'explicit')"
+          >Explicits Only</a
+        >
+      </template>
+    </div>
+  </div>
+  <div
+    class="playlist row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
+  >
+    <div
+      class="playlist col"
+      v-for="playlistItem in filterList(sortedPlaylistItems)"
+      v-bind:key="getPlaylistItemId(playlistItem)"
+      @click="
+        !selectionMode
+          ? playlistItemType === 'playlist' &&
+            goToPlaylistPage(getPlaylistItemId(playlistItem))
+          : handleSelection(getPlaylistItemId(playlistItem))
+      "
+    >
+      <!--{{ console.log(playlist) }}-->
+      <div
+        class="playlist card h-100"
+        :style="{
+          'background-color': selectedItems.includes(
+            getPlaylistItemId(playlistItem)
+          )
+            ? 'orange'
+            : 'white',
+        }"
+      >
+        <template v-if="playlistItemType === 'playlist'">
+          <ListShowPlaylist :playlist="playlistItem" />
+        </template>
+        <template v-if="playlistItemType === 'track'">
+          <ListShowTrack :playlistItem="playlistItem" />
+        </template>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import ListShowPlaylist from "../components/ListShowPlaylist.vue";
+import ListShowTrack from "../components/ListShowTrack.vue";
+
+export default {
+  name: "ListUsersPlaylists",
+  components: {
+    ListShowPlaylist,
+    ListShowTrack,
+  },
+  props: {
+    playlistItemType: String,
+    originalPlaylistItems: Object,
+  },
+  data() {
+    return {
+      selectedItems: [],
+      selectionMode: false,
+      sortLabel: null,
+      filterType: "none",
+      sortedPlaylistItems: null,
+      filtedPlaylistItems: null,
+    };
+  },
+  watch: {
+    $props: {
+      handler() {
+        if (this.originalPlaylistItems !== null) {
+          if (this.playlistItemType === "track") {
+            this.sortUnsorted();
+          } else {
+            this.sortNewestFirst();
+          }
+          this.filterLabel = "No Filter";
+        }
+      },
+      deep: true,
+      immediate: true,
+    },
+    selectionMode: function (val) {
+      if (!val) {
+        this.selectedItems = [];
+      }
+    },
+  },
+  methods: {
+    getPlaylistItemId(item) {
+      return this.playlistItemType === "track" ? item.track.id : item.id;
+    },
+    handleSelection(id) {
+      let selection = this.selectedItems;
+      // Add item to selection list if it isn't already in there
+      if (!selection.includes(id)) {
+        this.selectedItems = [...selection, id];
+      }
+      // Remove item from selection list if it's already within the list
+      else {
+        const idIndex = selection.indexOf(id);
+        selection.splice(idIndex, 1);
+        this.selectedItems = selection;
+      }
+    },
+    sortUnsorted() {
+      this.sortLabel = "Unsorted";
+      this.sortedPlaylistItems = [...this.originalPlaylistItems];
+    },
+    sortNewestFirst() {
+      this.sortLabel = "Newest First";
+      if (this.playlistItemType === "track") {
+        this.sortedPlaylistItems = [...this.originalPlaylistItems].sort(
+          (a, b) => b["added_at"].localeCompare(a["added_at"])
+        );
+      }
+      // TODO: This may not really be newest first
+      else {
+        this.sortedPlaylistItems = [...this.originalPlaylistItems];
+      }
+    },
+    sortOldestFirst() {
+      this.sortLabel = "Oldest First";
+      if (this.playlistItemType === "track") {
+        this.sortedPlaylistItems = [...this.originalPlaylistItems].sort(
+          (a, b) => a["added_at"].localeCompare(b["added_at"])
+        );
+      } else {
+        this.sortedPlaylistItems = [...this.originalPlaylistItems]
+          .slice()
+          .reverse();
+      }
+    },
+    sortAlphAsc() {
+      this.sortLabel = "Title Ascending";
+      this.sortedPlaylistItems = [...this.originalPlaylistItems].sort((a, b) =>
+        this.playlistItemType === "track"
+          ? a.track.name.localeCompare(b.track.name)
+          : a.name.localeCompare(b.name)
+      );
+    },
+    sortAlphDesc() {
+      this.sortLabel = "Title Descending";
+      this.sortedPlaylistItems = [...this.originalPlaylistItems].sort((a, b) =>
+        this.playlistItemType === "track"
+          ? b.track.name.localeCompare(a.track.name)
+          : b.name.localeCompare(a.name)
+      );
+    },
+    sortByOwner() {
+      this.sortLabel = "Owner";
+      this.sortedPlaylistItems = [...this.originalPlaylistItems].sort((a, b) =>
+        a.owner.display_name.localeCompare(b.owner.display_name)
+      );
+    },
+    sortByArtist() {
+      this.sortLabel = "Lead Artist";
+      this.sortedPlaylistItems = [...this.originalPlaylistItems].sort(function (
+        a,
+        b
+      ) {
+        // Sort by artist name appearing alphabetically
+        if (a.track.artists[0].name > b.track.artists[0].name) {
+          return 1;
+        }
+        if (a.track.artists[0].name < b.track.artists[0].name) {
+          return -1;
+        }
+        // If there is a tie (same artist name), sort by song title alphabetically
+        if (a.track.name > b.track.name) {
+          return 1;
+        }
+        if (a.track.name < b.track.name) {
+          return -1;
+        }
+      });
+    },
+    // Only relevant to playlists
+    sortByTotalTracks() {
+      this.sortLabel = "Total Tracks";
+      this.sortedPlaylistItems = [...this.originalPlaylistItems].sort(
+        (a, b) => b.tracks.total - a.tracks.total
+      );
+    },
+    filterPublicOnly(list) {
+      return list.filter((item) => item.public === true);
+    },
+    filterPrivateOnly(list) {
+      return list.filter((item) => item.public === false);
+    },
+    filterNoLocalOnly(list) {
+      return list.filter((item) => item.track["is_local"] === false);
+    },
+    filterLocalOnly(list) {
+      return list.filter((item) => item.track["is_local"] === true);
+    },
+    filterNoExplicitOnly(list) {
+      return list.filter((item) => item.track.explicit === false);
+    },
+    filterExplicitOnly(list) {
+      return list.filter((item) => item.track.explicit === true);
+    },
+    filterList(list) {
+      switch (this.filterType) {
+        case "public":
+          return this.filterPublicOnly(list);
+        case "private":
+          return this.filterPrivateOnly(list);
+        case "no-local":
+          return this.filterNoLocalOnly(list);
+        case "local":
+          return this.filterLocalOnly(list);
+        case "no-explicit":
+          return this.filterNoExplicitOnly(list);
+        case "explicit":
+          return this.filterExplicitOnly(list);
+        case "none":
+        default:
+          return this.sortedPlaylistItems;
+      }
+    },
+    // Only relevant to playlists
+    goToPlaylistPage(playlistID) {
+      window.location.href = `/playlist/${playlistID}`;
+    },
+  },
+};
+</script>

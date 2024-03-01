@@ -1,4 +1,5 @@
 <template>
+  <!-- TODO: This whole file can be removed once done transitioning over to refactored tracks and playlists -->
   <div class="playlist">
     <button type="button" class="btn btn-primary" @click="goToPlaylistsList">
       Return to Playlists List
