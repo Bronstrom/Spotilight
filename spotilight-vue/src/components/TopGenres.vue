@@ -1,6 +1,6 @@
 <template>
   <div class="top-genres m-5">
-    <div class="dropdown">
+    <div class="dropdown time-range">
       <button
         class="btn btn-primary dropdown-toggle"
         type="button"

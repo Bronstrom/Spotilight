@@ -1,7 +1,7 @@
 <template>
   <div class="top-tracks m-5">
     <h3>Top Tracks</h3>
-    <div class="dropdown">
+    <div class="dropdown time-range">
       <button
         class="btn btn-primary dropdown-toggle"
         type="button"
@@ -29,12 +29,29 @@
         >
       </div>
     </div>
+    <div class="dropdown limit">
+      <button
+        class="btn btn-primary dropdown-toggle"
+        type="button"
+        id="top-genre-limit-button"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        Show Top {{ limit }}
+      </button>
+      <div class="dropdown-menu" aria-labelledby="top-genre-limit-button">
+        <a class="dropdown-item" @click="limit = 3">Show Top 3</a>
+        <a class="dropdown-item" @click="limit = 5">Show Top 5</a>
+        <a class="dropdown-item" @click="limit = 10">Show Top 10</a>
+        <a class="dropdown-item" @click="limit = 25">Show Top 25</a>
+      </div>
+    </div>
     <div
       class="track row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
     >
       <div
         class="track col"
-        v-for="track in curTopTracks"
+        v-for="track in curTopTracks.slice(0, limit)"
         v-bind:key="track.id"
       >
         <div class="track card h-100">
@@ -80,7 +97,8 @@ import axios from "axios";
 import cookie from "js-cookie";
 
 //const BACK_END_URL = "http://localhost:5000";
-const TOP_COUNT = 5;
+const DEFAULT_LIMIT_COUNT = 5;
+const MAX_LIMIT_COUNT = 25;
 
 function getHeader() {
   return {
@@ -98,12 +116,13 @@ export default {
       topTracksLong: [],
       curTopTracks: [],
       timeRange: "Medium Term",
+      limit: DEFAULT_LIMIT_COUNT,
     };
   },
   methods: {
     handleTopTracks() {
       // TODO: Refactor some of this duplication
-      const medium_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&offset=0&limit=${TOP_COUNT}`;
+      const medium_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
       axios({
         method: "GET",
         url: medium_term_track_endpoint,
@@ -116,7 +135,7 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      const short_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&offset=0&limit=${TOP_COUNT}`;
+      const short_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
       axios({
         method: "GET",
         url: short_term_track_endpoint,
@@ -128,7 +147,7 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      const long_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&offset=0&limit=${TOP_COUNT}`;
+      const long_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
       axios({
         method: "GET",
         url: long_term_track_endpoint,
