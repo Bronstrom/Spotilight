@@ -100,12 +100,36 @@
       </template>
     </div>
   </div>
+  <div class="toggle grid list">
+    <input
+      v-on:change="viewType = 'grid'"
+      type="radio"
+      class="btn-check"
+      name="view-options"
+      id="grid-selection"
+      autocomplete="off"
+      checked
+    />
+    <label class="btn btn-outline-success" for="grid-selection">Grid</label>
+    <input
+      v-on:change="viewType = 'list'"
+      type="radio"
+      class="btn-check"
+      name="view-options"
+      id="list-selection"
+      autocomplete="off"
+    />
+    <label class="btn btn-outline-danger" for="list-selection">List</label>
+  </div>
+  {{ console.log(viewType) }}
+  <!-- Render grid view -->
   <div
+    v-if="viewType === 'grid'"
     class="playlist row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
   >
     <div
-      class="playlist col"
       v-for="playlistItem in filterList(sortedPlaylistItems)"
+      class="playlist col"
       v-bind:key="getPlaylistItemId(playlistItem)"
       @click="
         !selectionMode
@@ -125,24 +149,65 @@
             : 'white',
         }"
       >
-        <template v-if="playlistItemType === 'playlist'">
-          <ListShowPlaylist :playlist="playlistItem" />
-        </template>
-        <template v-if="playlistItemType === 'track'">
-          <ListShowTrack :playlistItem="playlistItem" />
-        </template>
+        <component :is="playlistItemComponent" :playlistItem="playlistItem" />
       </div>
     </div>
   </div>
+  <!-- Render list view -->
+  <table v-else class="table table-striped">
+    <thead class="thead-dark">
+      <tr>
+        <th>Image</th>
+        <th>Title</th>
+        <th v-if="playlistItemType === 'playlist'">Owner</th>
+        <th v-if="playlistItemType === 'playlist'">Visibility</th>
+        <th v-if="playlistItemType === 'playlist'">Description</th>
+        <th v-if="playlistItemType === 'playlist'">Track Count</th>
+        <th v-if="playlistItemType === 'track'">Added At</th>
+        <th v-if="playlistItemType === 'track'">Local</th>
+        <th v-if="playlistItemType === 'track'">Explicit</th>
+        <th v-if="playlistItemType === 'track'">Album/Single</th>
+        <th v-if="playlistItemType === 'track'">Duration</th>
+        <th v-if="playlistItemType === 'track'">Artist</th>
+        <th>Link</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="playlistItem in filterList(sortedPlaylistItems)"
+        v-bind:key="getPlaylistItemId(playlistItem)"
+        @click="
+          !selectionMode
+            ? playlistItemType === 'playlist' &&
+              goToPlaylistPage(getPlaylistItemId(playlistItem))
+            : handleSelection(getPlaylistItemId(playlistItem))
+        "
+      >
+        <component
+          :is="playlistItemComponent"
+          :playlistItem="playlistItem"
+          :color="
+            selectedItems.includes(getPlaylistItemId(playlistItem))
+              ? 'orange'
+              : 'white'
+          "
+        />
+      </tr>
+    </tbody>
+  </table>
 </template>
 
 <script>
+import GridShowPlaylist from "../components/GridShowPlaylist.vue";
+import GridShowTrack from "../components/GridShowTrack.vue";
 import ListShowPlaylist from "../components/ListShowPlaylist.vue";
 import ListShowTrack from "../components/ListShowTrack.vue";
 
 export default {
   name: "ListUsersPlaylists",
   components: {
+    GridShowPlaylist,
+    GridShowTrack,
     ListShowPlaylist,
     ListShowTrack,
   },
@@ -158,6 +223,7 @@ export default {
       filterType: "none",
       sortedPlaylistItems: null,
       filtedPlaylistItems: null,
+      viewType: "grid",
     };
   },
   watch: {
@@ -178,6 +244,15 @@ export default {
     selectionMode: function (val) {
       if (!val) {
         this.selectedItems = [];
+      }
+    },
+  },
+  computed: {
+    playlistItemComponent() {
+      if (this.playlistItemType === "playlist") {
+        return this.viewType === "grid" ? GridShowPlaylist : ListShowPlaylist;
+      } else {
+        return this.viewType === "grid" ? GridShowTrack : ListShowTrack;
       }
     },
   },
@@ -321,3 +396,4 @@ export default {
   },
 };
 </script>
+./GridShowPlaylist.vue./ListShowPlaylist.vue
