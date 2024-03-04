@@ -1,66 +1,44 @@
-from flask import Flask, Blueprint, redirect, request, jsonify, make_response
-from dotenv import dotenv_values
+from flask import Flask, Blueprint, redirect, session, jsonify
 from datetime import datetime
-import random, string, urllib.parse, requests
+import requests
 
 # Define "auth" blueprint
 spotlight_bp = Blueprint("spotlight", __name__)
 
-# Import secrets
-secrets=dotenv_values(".env")
-client_id = secrets["CLIENT_ID"]
-client_secret = secrets["CLIENT_SECRET"]
-FRONT_END_URL = secrets["FRONT_END_URL"]
-BACK_END_URL = secrets["BACK_END_URL"]
-
-# Define import Spotify endpoints
-AUTH_ENDPOINT = "https://accounts.spotify.com/authorize"
-TOKEN_ENDPOINT = "https://accounts.spotify.com/api/token"
+# Define Spotify base endpoint
 API_BASE_ENDPOINT = "https://api.spotify.com/v1/"
-ACCOUNT_URL = "https://accounts.spotify.com"
-LOGOUT_URL = "https://accounts.spotify.com/logout"
 
-# "/toptracks" endpoint: Get a users top tracks they've listened to
-@spotlight_bp.route("/toptracks/<count>", methods=["GET"])
-def login(count):
-    refresh_token = request.cookies.get("refresh_token")
-    expires_at = request.cookies.get("expires_at")
-    access_token = request.cookies.get("access_token")
-
+# "/top-tracks" endpoint: Get a users top tracks they've listened to for a time range and specified count
+@spotlight_bp.route("/top-tracks/<time_range>/<count>", methods=["GET"])
+def get_top_tracks(time_range, count):
+    # User will need to be logged in to aquire profile data - attempt sign in again
+    if "access_token" not in session:
+        return redirect("/auth/login")
+    # Token has expired and token should be refreshed
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/auth/refresh-token")
     headers = {
         "content-type": "application/x-www-form-urlencoded",
-        "Authorization": f"Bearer {access_token}"
+        "Authorization": f"Bearer {session['access_token']}"
     }
-    response = requests.get(API_BASE_ENDPOINT + "me/top/tracks?offset=0&limit=" + count, headers=headers)
-    toptracks = response.json()
-    return jsonify(toptracks)
+    response = requests.get(API_BASE_ENDPOINT + "me/top/tracks?time_range=" + time_range + "&offset=0&limit=" + count, headers=headers)
+    top_tracks = response.json()
+    return jsonify(top_tracks)
 
-# "/refresh-token" endpoint: Creates a new token if current token expired
-@spotlight_bp.route("/refresh-token", methods=["GET"])
-def refresh_token():
-    refresh_token = request.cookies.get("refresh_token")
-    expires_at = request.cookies.get("expires_at")
-    access_token = request.cookies.get("access_token")
-    # Refresh token doesn't exist 
-    if not "refresh_token":
-        return {"error": "no_refresh_token"}
+# "/top-artists" endpoint: Get a users top artists they've listened to for a time range, offset, and specified count
+@spotlight_bp.route("/top-artists/<time_range>/<offset>/<count>", methods=["GET"])
+def get_top_artists(time_range, offset, count):
+    # User will need to be logged in to aquire profile data - attempt sign in again
+    if "access_token" not in session:
+        return redirect("/auth/login")
     # Token has expired and token should be refreshed
-    if datetime.now().timestamp() > float(expires_at):
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": f"Bearer {access_token}"
-        }
-        req_body = {
-            "grant_type": "refresh_token",
-            "refresh_token": refresh_token,
-            "client_id": client_id,
-            "client_secret": client_secret
-        }
-        # Aquire new refresh_token and update cookies
-        response = requests.post(TOKEN_ENDPOINT, headers=headers, data=req_body)
-        new_token = response.json()
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/auth/refresh-token")
+    headers = {
+        "content-type": "application/x-www-form-urlencoded",
+        "Authorization": f"Bearer {session['access_token']}"
+    }
+    response = requests.get(API_BASE_ENDPOINT + "me/top/artists?time_range=" + time_range + "&offset=" + offset + "&limit=" + count, headers=headers)
+    top_artists = response.json()
+    return jsonify(top_artists)
 
-        response = redirect(FRONT_END_URL + "/login")
-        set_token_cookies(new_token, response)
-
-        return response

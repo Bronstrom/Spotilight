@@ -60,17 +60,7 @@
 
 <script>
 import axios from "axios";
-import cookie from "js-cookie";
 import ListPlaylistItems from "../components/ListPlaylistItems.vue";
-
-//const BACK_END_URL = "http://localhost:5000";
-
-function getHeader() {
-  return {
-    Authorization: `Bearer ${cookie.get("access_token")}`,
-    "Content-Type": "application/json",
-  };
-}
 
 export default {
   name: "ListUserPlaylistDetails",
@@ -88,12 +78,10 @@ export default {
   },
   methods: {
     aquirePlaylist() {
-      let playlist_endpoint = `https://api.spotify.com/v1/playlists/${this.playlistID}`;
-      axios({
-        method: "GET",
-        url: playlist_endpoint,
-        headers: getHeader(),
-      })
+      // TODO: Determine why "playlist/" is not required before this api call, may have to do with redirect on front-end
+      let playlist_endpoint = this.playlistID;
+      axios
+        .get(playlist_endpoint)
         .then((res) => {
           const playlist = res.data;
           this.playlist = playlist;
@@ -109,12 +97,9 @@ export default {
           // Aquire all tracks till reaching total track count
           offset = offset + limit;
           for (offset; offset < total; offset = offset + limit) {
-            playlist_endpoint = `https://api.spotify.com/v1/playlists/${this.playlistID}/tracks?offset=${offset}&limit=${limit}`;
-            axios({
-              method: "GET",
-              url: playlist_endpoint,
-              headers: getHeader(),
-            })
+            playlist_endpoint = `${this.playlistID}/${offset}/${limit}`;
+            axios
+              .get(playlist_endpoint)
               .then((res) => {
                 this.originalTrackList = [
                   ...this.originalTrackList,

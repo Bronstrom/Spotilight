@@ -51,7 +51,7 @@
     >
       <div
         class="track col"
-        v-for="track in curTopTracks.slice(0, limit)"
+        v-for="track in curTopTracks?.slice(0, limit)"
         v-bind:key="track.id"
       >
         <div class="track card h-100">
@@ -94,18 +94,9 @@
 
 <script>
 import axios from "axios";
-import cookie from "js-cookie";
 
-//const BACK_END_URL = "http://localhost:5000";
 const DEFAULT_LIMIT_COUNT = 5;
 const MAX_LIMIT_COUNT = 25;
-
-function getHeader() {
-  return {
-    Authorization: `Bearer ${cookie.get("access_token")}`,
-    "Content-Type": "application/json",
-  };
-}
 
 export default {
   name: "TopTracks",
@@ -121,13 +112,10 @@ export default {
   },
   methods: {
     handleTopTracks() {
-      // TODO: Refactor some of this duplication
-      const medium_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=medium_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
-      axios({
-        method: "GET",
-        url: medium_term_track_endpoint,
-        headers: getHeader(),
-      })
+      const medium_term_track_endpoint =
+        "/spotlight/top-tracks/medium_term/" + MAX_LIMIT_COUNT;
+      axios
+        .get(medium_term_track_endpoint)
         .then((res) => {
           this.topTracksMedium = res.data.items;
           this.curTopTracks = res.data.items;
@@ -135,24 +123,22 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      const short_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=short_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
-      axios({
-        method: "GET",
-        url: short_term_track_endpoint,
-        headers: getHeader(),
-      })
+
+      const short_term_track_endpoint =
+        "/spotlight/top-tracks/short_term/" + MAX_LIMIT_COUNT;
+      axios
+        .get(short_term_track_endpoint)
         .then((res) => {
           this.topTracksShort = res.data.items;
         })
         .catch((err) => {
           console.error(err);
         });
-      const long_term_track_endpoint = `https://api.spotify.com/v1/me/top/tracks?time_range=long_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
-      axios({
-        method: "GET",
-        url: long_term_track_endpoint,
-        headers: getHeader(),
-      })
+
+      const long_term_track_endpoint =
+        "/spotlight/top-tracks/long_term/" + MAX_LIMIT_COUNT;
+      axios
+        .get(long_term_track_endpoint)
         .then((res) => {
           this.topTracksLong = res.data.items;
         })
@@ -175,26 +161,6 @@ export default {
       }
     },
   },
-  /*
-    TODO: Consider handling all api calls in the back-end
-    handleTopTracks() {
-      const path = BACK_END_URL + "/spotlight/toptracks/" + TOP_COUNT;
-      axios({
-        method: "GET",
-        url: path,
-        headers: {
-          "Access-Control-Allow-Origin": BACK_END_URL + "/*",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          this.topTracks = res?.data;
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-  },*/
   created() {
     this.handleTopTracks();
   },

@@ -7,37 +7,27 @@
     >
       Logout
     </button>
-    <h1>Profile</h1>
+    <h1 v-if="displayName">Welcome, {{ displayName }}!</h1>
     <p>{{ userProfile }}</p>
   </div>
 </template>
 
 <script>
 import axios from "axios";
-import cookie from "js-cookie";
-
-function getHeader() {
-  return {
-    Authorization: `Bearer ${cookie.get("access_token")}`,
-    "Content-Type": "application/json",
-  };
-}
 
 export default {
   name: "ProfilePage",
   data() {
     return {
       userProfile: "",
+      displayName: "",
     };
   },
   methods: {
     retrieveAccountProfile() {
-      const profile_endpoint = "https://api.spotify.com/v1/me";
-      axios({
-        method: "GET",
-        url: profile_endpoint,
-        headers: getHeader(),
-      })
+      const path = "/auth/user-profile";
+      axios
+        .get(path)
         .then((res) => {
           this.userProfile = res.data;
         })
@@ -45,13 +35,21 @@ export default {
           console.error(err);
         });
     },
+    retrieveAccountDisplayName() {
+      const path = "/user/display-name";
+      axios
+        .get(path)
+        .then((res) => {
+          this.displayName = res.data;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
     handleAccountLogout() {
-      const path = "http://localhost:5000/auth/logout";
-      axios({
-        method: "GET",
-        url: path,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:5000/*" },
-      })
+      const path = "/auth/logout";
+      axios
+        .get(path)
         .then((res) => {
           const resposeUrl = res?.data?.url;
           window.open(resposeUrl, "_blank");
@@ -63,6 +61,7 @@ export default {
   },
   created() {
     this.retrieveAccountProfile();
+    this.retrieveAccountDisplayName();
   },
 };
 </script>
