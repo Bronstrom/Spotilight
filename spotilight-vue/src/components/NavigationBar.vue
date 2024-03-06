@@ -54,18 +54,30 @@
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
-              <img
-                :src="profileIcon"
-                class="rounded-circle"
-                height="50"
-                alt="User Profile"
-                loading="lazy"
-              />
+              <template v-if="profileIcon !== ''">
+                <img
+                  :src="profileIcon"
+                  class="rounded-circle"
+                  height="50"
+                  alt="User Profile"
+                  loading="lazy"
+                />
+              </template>
+              <span v-else style="font-size: 2rem">O</span>
             </a>
             <ul class="dropdown-menu">
               <li>
-                <a class="dropdown-item" @click="handleAccountLogout()"
+                <a
+                  v-if="profileIcon !== ''"
+                  class="dropdown-item"
+                  @click="handleAccountLogout()"
                   >Logout</a
+                >
+                <a
+                  v-else
+                  class="dropdown-item"
+                  @click="handleSpotifyAuthenticate()"
+                  >Login</a
                 >
               </li>
             </ul>
@@ -111,9 +123,27 @@ export default {
           console.error(err);
         });
     },
+    handleSpotifyAuthenticate() {
+      const path = "/auth/login";
+      axios
+        .get(path)
+        .then((res) => {
+          window.location.href = res?.data?.url;
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
   },
   created() {
     this.retrieveAccountProfileIcon();
   },
 };
 </script>
+
+<style>
+.dropdown-toggle {
+  color: #ffffff;
+  text-decoration: none;
+}
+</style>

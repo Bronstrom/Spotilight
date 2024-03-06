@@ -28,9 +28,10 @@ def get_display_name():
 # "/display-name" endpoint: Get a user's profile photo
 @user_bp.route("/profile-photo", methods=["GET"])
 def get_profile_photo():
-    # User will need to be logged in to aquire user data - attempt sign in again when no token
+    # User will need to be logged in to aquire user data - when no token is found, assume they
+    # haven't authenticated and return a blank string
     if "access_token" not in session:
-        return redirect("/auth/login")
+        return ""
     # Token has expired and token should be refreshed
     if datetime.now().timestamp() > session["expires_at"]:
         return redirect("/auth/refresh-token")
