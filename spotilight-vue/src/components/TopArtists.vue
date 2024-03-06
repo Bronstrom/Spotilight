@@ -51,7 +51,7 @@
     >
       <div
         class="artist col"
-        v-for="artist in curTopArtists.slice(0, limit)"
+        v-for="artist in curTopArtists?.slice(0, limit)"
         v-bind:key="artist.id"
       >
         <div class="artist card h-100">
@@ -98,18 +98,9 @@
 
 <script>
 import axios from "axios";
-import cookie from "js-cookie";
 
-//const BACK_END_URL = "http://localhost:5000";
 const DEFAULT_LIMIT_COUNT = 5;
 const MAX_LIMIT_COUNT = 25;
-
-function getHeader() {
-  return {
-    Authorization: `Bearer ${cookie.get("access_token")}`,
-    "Content-Type": "application/json",
-  };
-}
 
 export default {
   name: "TopArtists",
@@ -126,12 +117,10 @@ export default {
   methods: {
     handleTopArtists() {
       // TODO: Refactor some of this duplication
-      const medium_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
-      axios({
-        method: "GET",
-        url: medium_term_artist_endpoint,
-        headers: getHeader(),
-      })
+      const medium_term_artist_endpoint =
+        "/spotlight/top-artists/medium_term/0/" + MAX_LIMIT_COUNT;
+      axios
+        .get(medium_term_artist_endpoint)
         .then((res) => {
           this.topArtistsMedium = res.data.items;
           this.curTopArtists = res.data.items;
@@ -139,24 +128,22 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      const short_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=short_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
-      axios({
-        method: "GET",
-        url: short_term_artist_endpoint,
-        headers: getHeader(),
-      })
+
+      const short_term_artist_endpoint =
+        "/spotlight/top-artists/short_term/0/" + MAX_LIMIT_COUNT;
+      axios
+        .get(short_term_artist_endpoint)
         .then((res) => {
           this.topArtistsShort = res.data.items;
         })
         .catch((err) => {
           console.error(err);
         });
-      const long_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=long_term&offset=0&limit=${MAX_LIMIT_COUNT}`;
-      axios({
-        method: "GET",
-        url: long_term_artist_endpoint,
-        headers: getHeader(),
-      })
+
+      const long_term_artist_endpoint =
+        "/spotlight/top-artists/long_term/0/" + MAX_LIMIT_COUNT;
+      axios
+        .get(long_term_artist_endpoint)
         .then((res) => {
           this.topArtistsLong = res.data.items;
         })
@@ -211,26 +198,6 @@ export default {
       }
     },
   },
-  /*
-    TODO: Consider handling all api calls in the back-end
-    handleTopArtists() {
-      const path = BACK_END_URL + "/spotlight/topartists/" + TOP_COUNT;
-      axios({
-        method: "GET",
-        url: path,
-        headers: {
-          "Access-Control-Allow-Origin": BACK_END_URL + "/*",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          this.topArtists = res?.data;
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-  },*/
   created() {
     this.handleTopArtists();
   },

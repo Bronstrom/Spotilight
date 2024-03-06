@@ -79,14 +79,6 @@
 
 <script>
 import axios from "axios";
-import cookie from "js-cookie";
-
-function getHeader() {
-  return {
-    Authorization: `Bearer ${cookie.get("access_token")}`,
-    "Content-Type": "application/json",
-  };
-}
 
 export default {
   name: "NavigationBar",
@@ -97,26 +89,20 @@ export default {
   },
   methods: {
     retrieveAccountProfileIcon() {
-      const profile_endpoint = "https://api.spotify.com/v1/me";
-      axios({
-        method: "GET",
-        url: profile_endpoint,
-        headers: getHeader(),
-      })
+      const path = "/user/profile-photo";
+      axios
+        .get(path)
         .then((res) => {
-          this.profileIcon = res.data.images[1].url;
+          this.profileIcon = res.data;
         })
         .catch((err) => {
           console.error(err);
         });
     },
     handleAccountLogout() {
-      const path = "http://localhost:5000/auth/logout";
-      axios({
-        method: "GET",
-        url: path,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:5000/*" },
-      })
+      const path = "/auth/logout";
+      axios
+        .get(path)
         .then((res) => {
           const resposeUrl = res?.data?.url;
           window.open(resposeUrl, "_blank");

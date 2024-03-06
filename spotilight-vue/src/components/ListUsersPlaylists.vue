@@ -10,17 +10,7 @@
 
 <script>
 import axios from "axios";
-import cookie from "js-cookie";
 import ListPlaylistItems from "../components/ListPlaylistItems.vue";
-
-//const BACK_END_URL = "http://localhost:5000";
-
-function getHeader() {
-  return {
-    Authorization: `Bearer ${cookie.get("access_token")}`,
-    "Content-Type": "application/json",
-  };
-}
 
 export default {
   name: "ListUsersPlaylists",
@@ -43,24 +33,18 @@ export default {
       let limit = 50;
       let offset = 0;
       let total = 0;
-      let playlist_endpoint = `https://api.spotify.com/v1/me/playlists?offset=${offset}&limit=${limit}`;
-      axios({
-        method: "GET",
-        url: playlist_endpoint,
-        headers: getHeader(),
-      })
+      let playlists_endpoint = `playlists/${offset}/${limit}`;
+      axios
+        .get(playlists_endpoint)
         .then((res) => {
           this.originalPlaylistList = res.data?.items;
           total = res.data.total;
           // Aquire all playlists till reaching total playlist count
           offset = offset + limit;
           for (offset; offset < total; offset = offset + limit) {
-            playlist_endpoint = `https://api.spotify.com/v1/me/playlists?offset=${offset}&limit=${limit}`;
-            axios({
-              method: "GET",
-              url: playlist_endpoint,
-              headers: getHeader(),
-            })
+            playlists_endpoint = `playlists/${offset}/${limit}`;
+            axios
+              .get(playlists_endpoint)
               .then((res) => {
                 this.originalPlaylistList = [
                   ...this.originalPlaylistList,

@@ -57,7 +57,6 @@
 
 <script>
 import axios from "axios";
-import cookie from "js-cookie";
 //import Chart from "chart.js/auto";
 import { Doughnut } from "vue-chartjs";
 import {
@@ -71,15 +70,7 @@ import {
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
-//const BACK_END_URL = "http://localhost:5000";
 const TOP_COUNT = 50;
-
-function getHeader() {
-  return {
-    Authorization: `Bearer ${cookie.get("access_token")}`,
-    "Content-Type": "application/json",
-  };
-}
 
 export default {
   name: "TopGenres",
@@ -343,12 +334,9 @@ export default {
       };
     },
     async handleUserTopArtistGenres(spotifyGenreList) {
-      const medium_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&offset=0&limit=${TOP_COUNT}`;
-      await axios({
-        method: "GET",
-        url: medium_term_artist_endpoint,
-        headers: getHeader(),
-      })
+      const medium_term_artist_endpoint = `/spotlight/top-artists/medium_term/0/${TOP_COUNT}`;
+      await axios
+        .get(medium_term_artist_endpoint)
         .then((res) => {
           //console.log(res.data);
           this.originalGenresMedium = res.data?.items;
@@ -375,13 +363,9 @@ export default {
             this.chartloaded = true;
           }
           for (offset; offset < total; offset = offset + limit) {
-            let artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=medium_term&offset=${offset}&limit=${TOP_COUNT}`;
-
-            axios({
-              method: "GET",
-              url: artist_endpoint,
-              headers: getHeader(),
-            })
+            let artist_endpoint = `/spotlight/top-artists/medium_term/${offset}/${TOP_COUNT}`;
+            axios
+              .get(artist_endpoint)
               .then((res) => {
                 const completeGenreList = [
                   ...this.originalGenresMedium,
@@ -412,12 +396,9 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      const short_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=short_term&offset=0&limit=${TOP_COUNT}`;
-      await axios({
-        method: "GET",
-        url: short_term_artist_endpoint,
-        headers: getHeader(),
-      })
+      const short_term_artist_endpoint = `/spotlight/top-artists/short_term/0/${TOP_COUNT}`;
+      await axios
+        .get(short_term_artist_endpoint)
         .then((res) => {
           this.originalGenresShort = res.data?.items;
 
@@ -439,13 +420,9 @@ export default {
             this.spotifyCategoryGenreCountShort = spotifyCountShort;
           }
           for (offset; offset < total; offset = offset + limit) {
-            let artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=short_term&offset=${offset}&limit=${TOP_COUNT}`;
-
-            axios({
-              method: "GET",
-              url: artist_endpoint,
-              headers: getHeader(),
-            })
+            let artist_endpoint = `/spotlight/top-artists/short_term/${offset}/${TOP_COUNT}`;
+            axios
+              .get(artist_endpoint)
               .then((res) => {
                 const completeGenreList = [
                   ...this.originalGenresShort,
@@ -472,12 +449,9 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      const long_term_artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=long_term&offset=0&limit=${TOP_COUNT}`;
-      await axios({
-        method: "GET",
-        url: long_term_artist_endpoint,
-        headers: getHeader(),
-      })
+      const long_term_artist_endpoint = `/spotlight/top-artists/long_term/0/${TOP_COUNT}`;
+      await axios
+        .get(long_term_artist_endpoint)
         .then((res) => {
           this.originalGenresLong = res.data?.items;
 
@@ -499,13 +473,9 @@ export default {
             this.spotifyCategoryGenreCountLong = spotifyCountLong;
           }
           for (offset; offset < total; offset = offset + limit) {
-            let artist_endpoint = `https://api.spotify.com/v1/me/top/artists?time_range=long_term&offset=${offset}&limit=${TOP_COUNT}`;
-
-            axios({
-              method: "GET",
-              url: artist_endpoint,
-              headers: getHeader(),
-            })
+            let artist_endpoint = `/spotlight/top-artists/long_term/${offset}/${TOP_COUNT}`;
+            axios
+              .get(artist_endpoint)
               .then((res) => {
                 const completeGenreList = [
                   ...this.originalGenresLong,
@@ -647,26 +617,6 @@ export default {
       }
     },
   },
-  /*
-    TODO: Consider handling all api calls in the back-end
-    handleTopArtists() {
-      const path = BACK_END_URL + "/spotlight/topartists/" + TOP_COUNT;
-      axios({
-        method: "GET",
-        url: path,
-        headers: {
-          "Access-Control-Allow-Origin": BACK_END_URL + "/*",
-          "Content-Type": "application/json",
-        },
-      })
-        .then((res) => {
-          this.topArtists = res?.data;
-        })
-        .catch((err) => {
-          console.error(err);
-        });
-    },
-  },*/
   created() {
     this.getTopGenres();
   },
