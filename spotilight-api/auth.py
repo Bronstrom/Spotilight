@@ -28,7 +28,7 @@ REDIRECT_URI = BACK_END_URL + "/auth/callback"
 # Generate random string for protection against cross-site request forgery
 STATE = "".join(random.choices(string.digits + string.ascii_letters, k=16))
 # Define param info
-SCOPES = ("user-read-private", "user-read-email", "playlist-read-private", "user-top-read")
+SCOPES = ("user-read-private", "user-read-email", "user-top-read", "playlist-read-private", "playlist-modify-public", "playlist-modify-private")
 SPACE_DELIMITER = " "
 
 # Helper function to set the session token

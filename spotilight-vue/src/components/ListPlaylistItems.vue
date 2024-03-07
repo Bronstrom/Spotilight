@@ -121,6 +121,28 @@
     />
     <label class="btn btn-outline-danger" for="list-selection">List</label>
   </div>
+  <div v-if="selectedItems?.length > 0" class="selected-item-options">
+    <button
+      class="btn btn-primary delete-selected-item"
+      data-bs-toggle="modal"
+      data-bs-target="#delete-playlist-item-modal"
+    >
+      Delete Selected Items
+    </button>
+    <SpotilightModal
+      title="Holy guacamole!"
+      id="delete-playlist-item-modal"
+      :body="
+        'You are about to delete  ' +
+        selectedItems?.length +
+        ' ' +
+        playlistItemType +
+        '(s). The action can be undone at: '
+      "
+      :actionLabel="'Delete ' + playlistItemType + '(s)'"
+      @action="deleteItems"
+    />
+  </div>
   {{ console.log(viewType) }}
   <!-- Render grid view -->
   <div
@@ -131,6 +153,7 @@
       v-for="playlistItem in filterList(sortedPlaylistItems)"
       class="playlist col"
       v-bind:key="getPlaylistItemId(playlistItem)"
+      :id="getPlaylistItemId(playlistItem) + '_item'"
       @click="
         !selectionMode
           ? playlistItemType === 'playlist' &&
@@ -176,6 +199,7 @@
       <tr
         v-for="playlistItem in filterList(sortedPlaylistItems)"
         v-bind:key="getPlaylistItemId(playlistItem)"
+        :id="getPlaylistItemId(playlistItem) + '_item'"
         @click="
           !selectionMode
             ? playlistItemType === 'playlist' &&
@@ -202,18 +226,24 @@ import GridShowPlaylist from "../components/GridShowPlaylist.vue";
 import GridShowTrack from "../components/GridShowTrack.vue";
 import ListShowPlaylist from "../components/ListShowPlaylist.vue";
 import ListShowTrack from "../components/ListShowTrack.vue";
+import SpotilightModal from "../components/SpotilightModal.vue";
+import axios from "axios";
 
 export default {
   name: "ListUsersPlaylists",
+  emits: ["deleted"],
   components: {
     GridShowPlaylist,
     GridShowTrack,
     ListShowPlaylist,
     ListShowTrack,
+    SpotilightModal,
   },
   props: {
     playlistItemType: String,
     originalPlaylistItems: Object,
+    // Single playlist item specific
+    itemId: String,
   },
   data() {
     return {
@@ -243,7 +273,7 @@ export default {
     },
     selectionMode: function (val) {
       if (!val) {
-        this.selectedItems = [];
+        this.resetSelectedItems();
       }
     },
   },
@@ -393,7 +423,45 @@ export default {
     goToPlaylistPage(playlistID) {
       window.location.href = `/playlist/${playlistID}`;
     },
+    resetSelectedItems() {
+      this.selectedItems = [];
+      this.selectionMode = false;
+    },
+    deleteItems() {
+      if (this.playlistItemType === "playlist") {
+        const delete_playlists_path = `/playlists/delete`;
+        axios({
+          method: "delete",
+          url: delete_playlists_path,
+          data: {
+            items: this.selectedItems,
+          },
+        })
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      } else {
+        const delete_tracks_path = `/playlist/${this.itemId}/delete-tracks`;
+        axios({
+          method: "delete",
+          url: delete_tracks_path,
+          data: {
+            items: this.selectedItems,
+          },
+        })
+          .then((res) => {
+            console.log(res.data);
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      }
+      this.resetSelectedItems();
+      this.$emit("deleted");
+    },
   },
 };
 </script>
-./GridShowPlaylist.vue./ListShowPlaylist.vue

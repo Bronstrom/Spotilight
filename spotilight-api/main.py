@@ -15,8 +15,7 @@ client_secret = secrets["CLIENT_SECRET"]
 FRONT_END_URL = secrets["FRONT_END_URL"]
 
 # Establish cross-origin support with pre-flight request
-CORS(app, supports_credentials=True, resources={r"/*": {"origins": FRONT_END_URL, 
-    "allow_headers": "Access-Control-Allow-Origin"}})
+CORS(app, supports_credentials=True, resources={r"/*": {"origins": FRONT_END_URL}})
 
 # "/" and "/home" endpoint: Landing page
 @app.route("/", methods=["GET"])

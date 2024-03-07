@@ -4,6 +4,7 @@
     <ListPlaylistItems
       playlistItemType="playlist"
       :originalPlaylistItems="originalPlaylistList"
+      @deleted="aquireAllPlaylists"
     />
   </div>
 </template>
@@ -59,6 +60,7 @@ export default {
         .catch((err) => {
           console.error(err);
         });
+      console.log("aquired_playlist");
     },
   },
   created() {
