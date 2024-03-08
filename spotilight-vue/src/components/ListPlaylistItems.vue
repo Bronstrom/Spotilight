@@ -20,21 +20,18 @@
       {{ sortLabel }}
     </button>
     <div class="dropdown-menu" aria-labelledby="sort-playlists-dropdown">
-      <a
-        v-if="playlistItemType === 'track'"
-        class="dropdown-item"
-        @click="sortUnsorted"
+      <a v-if="isTypeTrack" class="dropdown-item" @click="sortUnsorted"
         >Unsorted (User organized)</a
       >
       <a class="dropdown-item" @click="sortNewestFirst">Newest First</a>
       <a class="dropdown-item" @click="sortOldestFirst">Oldest First</a>
       <a class="dropdown-item" @click="sortAlphAsc">Title Ascending</a>
       <a class="dropdown-item" @click="sortAlphDesc">Title Descending</a>
-      <template v-if="playlistItemType === 'playlist'">
+      <template v-if="isTypePlaylist">
         <a class="dropdown-item" @click="sortByOwner">Owner</a>
         <a class="dropdown-item" @click="sortByTotalTracks">Total Tracks</a>
       </template>
-      <template v-if="playlistItemType === 'track'">
+      <template v-if="isTypeTrack">
         <a class="dropdown-item" @click="sortByArtist">Lead Artist</a>
       </template>
     </div>
@@ -56,7 +53,7 @@
         @click="(filterLabel = 'No Filter'), (filterType = 'none')"
         >No Filter</a
       >
-      <template v-if="playlistItemType === 'playlist'">
+      <template v-if="isTypePlaylist">
         <a
           class="dropdown-item"
           @click="
@@ -72,7 +69,7 @@
           >Private Playlists Only</a
         >
       </template>
-      <template v-if="playlistItemType === 'track'">
+      <template v-if="isTypeTrack">
         <a
           class="dropdown-item"
           @click="
@@ -130,20 +127,26 @@
       Delete Selected Items
     </button>
     <SpotilightModal
-      title="Holy guacamole!"
+      :title="'Delete ' + playlistItemType + '(s)'"
       id="delete-playlist-item-modal"
       :body="
-        'You are about to delete  ' +
+        'Holy guacamole! You are about to delete  ' +
         selectedItems?.length +
         ' ' +
         playlistItemType +
-        '(s). The action can be undone at: '
+        '(s). Are you sure you want to do this?'
       "
+      :link="
+        isTypePlaylist()
+          ? 'https://www.spotify.com/us/account/recover-playlists/'
+          : null
+      "
+      :linkInfo="isTypePlaylist() ? 'Playlists can be recovered at: ' : null"
+      :linkLabel="isTypePlaylist() ? 'Spotify Recover Playlists' : null"
       :actionLabel="'Delete ' + playlistItemType + '(s)'"
       @action="deleteItems"
     />
   </div>
-  {{ console.log(viewType) }}
   <!-- Render grid view -->
   <div
     v-if="viewType === 'grid'"
@@ -156,7 +159,7 @@
       :id="getPlaylistItemId(playlistItem) + '_item'"
       @click="
         !selectionMode
-          ? playlistItemType === 'playlist' &&
+          ? isTypePlaylist() &&
             goToPlaylistPage(getPlaylistItemId(playlistItem))
           : handleSelection(getPlaylistItemId(playlistItem))
       "
@@ -182,16 +185,16 @@
       <tr>
         <th>Image</th>
         <th>Title</th>
-        <th v-if="playlistItemType === 'playlist'">Owner</th>
-        <th v-if="playlistItemType === 'playlist'">Visibility</th>
-        <th v-if="playlistItemType === 'playlist'">Description</th>
-        <th v-if="playlistItemType === 'playlist'">Track Count</th>
-        <th v-if="playlistItemType === 'track'">Added At</th>
-        <th v-if="playlistItemType === 'track'">Local</th>
-        <th v-if="playlistItemType === 'track'">Explicit</th>
-        <th v-if="playlistItemType === 'track'">Album/Single</th>
-        <th v-if="playlistItemType === 'track'">Duration</th>
-        <th v-if="playlistItemType === 'track'">Artist</th>
+        <th v-if="isTypePlaylist">Owner</th>
+        <th v-if="isTypePlaylist">Visibility</th>
+        <th v-if="isTypePlaylist">Description</th>
+        <th v-if="isTypePlaylist">Track Count</th>
+        <th v-if="isTypeTrack">Added At</th>
+        <th v-if="isTypeTrack">Local</th>
+        <th v-if="isTypeTrack">Explicit</th>
+        <th v-if="isTypeTrack">Album/Single</th>
+        <th v-if="isTypeTrack">Duration</th>
+        <th v-if="isTypeTrack">Artist</th>
         <th>Link</th>
       </tr>
     </thead>
@@ -202,7 +205,7 @@
         :id="getPlaylistItemId(playlistItem) + '_item'"
         @click="
           !selectionMode
-            ? playlistItemType === 'playlist' &&
+            ? isTypePlaylist() &&
               goToPlaylistPage(getPlaylistItemId(playlistItem))
             : handleSelection(getPlaylistItemId(playlistItem))
         "
@@ -260,7 +263,7 @@ export default {
     $props: {
       handler() {
         if (this.originalPlaylistItems !== null) {
-          if (this.playlistItemType === "track") {
+          if (this.isTypeTrack()) {
             this.sortUnsorted();
           } else {
             this.sortNewestFirst();
@@ -279,7 +282,7 @@ export default {
   },
   computed: {
     playlistItemComponent() {
-      if (this.playlistItemType === "playlist") {
+      if (this.isTypePlaylist()) {
         return this.viewType === "grid" ? GridShowPlaylist : ListShowPlaylist;
       } else {
         return this.viewType === "grid" ? GridShowTrack : ListShowTrack;
@@ -287,8 +290,14 @@ export default {
     },
   },
   methods: {
+    isTypePlaylist() {
+      return this.playlistItemType === "playlist";
+    },
+    isTypeTrack() {
+      return this.playlistItemType === "track";
+    },
     getPlaylistItemId(item) {
-      return this.playlistItemType === "track" ? item.track.id : item.id;
+      return this.isTypeTrack() ? item.track.id : item.id;
     },
     handleSelection(id) {
       let selection = this.selectedItems;
@@ -309,7 +318,7 @@ export default {
     },
     sortNewestFirst() {
       this.sortLabel = "Newest First";
-      if (this.playlistItemType === "track") {
+      if (this.isTypeTrack()) {
         this.sortedPlaylistItems = [...this.originalPlaylistItems].sort(
           (a, b) => b["added_at"].localeCompare(a["added_at"])
         );
@@ -321,7 +330,7 @@ export default {
     },
     sortOldestFirst() {
       this.sortLabel = "Oldest First";
-      if (this.playlistItemType === "track") {
+      if (this.isTypeTrack()) {
         this.sortedPlaylistItems = [...this.originalPlaylistItems].sort(
           (a, b) => a["added_at"].localeCompare(b["added_at"])
         );
@@ -334,7 +343,7 @@ export default {
     sortAlphAsc() {
       this.sortLabel = "Title Ascending";
       this.sortedPlaylistItems = [...this.originalPlaylistItems].sort((a, b) =>
-        this.playlistItemType === "track"
+        this.isTypeTrack()
           ? a.track.name.localeCompare(b.track.name)
           : a.name.localeCompare(b.name)
       );
@@ -342,7 +351,7 @@ export default {
     sortAlphDesc() {
       this.sortLabel = "Title Descending";
       this.sortedPlaylistItems = [...this.originalPlaylistItems].sort((a, b) =>
-        this.playlistItemType === "track"
+        this.isTypeTrack()
           ? b.track.name.localeCompare(a.track.name)
           : b.name.localeCompare(a.name)
       );
@@ -427,8 +436,14 @@ export default {
       this.selectedItems = [];
       this.selectionMode = false;
     },
+    deleteSuccess(output) {
+      console.log("Delete returned with: ");
+      console.log(output);
+      this.resetSelectedItems();
+      this.$emit("deleted");
+    },
     deleteItems() {
-      if (this.playlistItemType === "playlist") {
+      if (this.isTypePlaylist()) {
         const delete_playlists_path = `/playlists/delete`;
         axios({
           method: "delete",
@@ -438,7 +453,7 @@ export default {
           },
         })
           .then((res) => {
-            console.log(res.data);
+            this.deleteSuccess(res.data);
           })
           .catch((err) => {
             console.error(err);
@@ -453,14 +468,12 @@ export default {
           },
         })
           .then((res) => {
-            console.log(res.data);
+            this.deleteSuccess(res.data);
           })
           .catch((err) => {
             console.error(err);
           });
       }
-      this.resetSelectedItems();
-      this.$emit("deleted");
     },
   },
 };

@@ -41,8 +41,7 @@ def delete_user_playlists():
     playlist_id_list = request.json.get("items")
     for playlist_id in playlist_id_list:
         response = requests.delete(API_BASE_ENDPOINT + "playlists/" + playlist_id + "/followers", headers=headers)
-        if errors in response:
-            print(jsonify(response))
+        print(response)
         # TODO: Catch error here if not 200 - test deleting a playlist that I have deleted on spotify (see if that returns error code)
     
     return { "status": "success" }

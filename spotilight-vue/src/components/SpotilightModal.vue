@@ -1,5 +1,4 @@
 <template>
-  {{ console.log("Modal to appear") }}
   <div
     class="modal fade"
     :id="id"
@@ -21,7 +20,11 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">{{ body }}</div>
+        <div class="modal-body">
+          <p>{{ body }}</p>
+          <p v-if="link">{{ linkInfo }}</p>
+          <a v-if="link" :href="link" target="_blank">{{ linkLabel }}</a>
+        </div>
         <div class="modal-footer">
           <button
             type="button"
@@ -54,6 +57,9 @@ export default {
     title: String,
     body: String,
     actionLabel: String,
+    link: String,
+    linkInfo: String,
+    linkLabel: String,
   },
 };
 </script>
