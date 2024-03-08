@@ -52,6 +52,8 @@
         <ListPlaylistItems
           playlistItemType="track"
           :originalPlaylistItems="originalTrackList"
+          :itemId="playlistID"
+          @deleted="aquirePlaylist"
         />
       </div>
     </div>

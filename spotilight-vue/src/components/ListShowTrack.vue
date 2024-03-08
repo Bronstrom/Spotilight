@@ -1,4 +1,5 @@
 <template>
+  {{ console.log(playlistItem) }}
   <td
     :style="{
       'background-color': color,

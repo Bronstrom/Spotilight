@@ -1,4 +1,4 @@
-from flask import Flask, Blueprint, redirect, session, jsonify
+from flask import Flask, Blueprint, redirect, request, session, jsonify
 from datetime import datetime
 import requests
 
@@ -24,3 +24,24 @@ def get_user_playlists(offset, count):
     response = requests.get(API_BASE_ENDPOINT + "me/playlists?offset=" + offset + "&limit=" + count, headers=headers)
     user_playlists = response.json()
     return jsonify(user_playlists)
+
+# "/playlists" endpoint: Delete a user's playlists
+@playlists_bp.route("delete", methods=["DELETE"])
+def delete_user_playlists():
+    # User will need to be logged in to aquire profile data - attempt sign in again
+    if "access_token" not in session:
+        return redirect("/auth/login")
+    # Token has expired and token should be refreshed
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/auth/refresh-token")
+    headers = {
+        "content-type": "application/x-www-form-urlencoded",
+        "Authorization": f"Bearer {session['access_token']}"
+    }
+    playlist_id_list = request.json.get("items")
+    for playlist_id in playlist_id_list:
+        response = requests.delete(API_BASE_ENDPOINT + "playlists/" + playlist_id + "/followers", headers=headers)
+        print(response)
+        # TODO: Catch error here if not 200 - test deleting a playlist that I have deleted on spotify (see if that returns error code)
+    
+    return { "status": "success" }

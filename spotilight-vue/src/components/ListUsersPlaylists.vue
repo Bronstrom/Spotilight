@@ -4,6 +4,7 @@
     <ListPlaylistItems
       playlistItemType="playlist"
       :originalPlaylistItems="originalPlaylistList"
+      @deleted="aquireAllPlaylists"
     />
   </div>
 </template>
