@@ -42,7 +42,7 @@ def get_user_playlist_tracks(playlist_id, offset, count):
     user_playlist_tracks = response.json()
     return jsonify(user_playlist_tracks)
 
-# "/delete-tracks" endpoint: Delete a user's playlists
+# "/delete-tracks" endpoint: Delete a user's playlist tracks
 @playlist_bp.route("<playlist_id>/delete-tracks", methods=["DELETE"])
 def delete_user_playlist_tracks(playlist_id):
     # User will need to be logged in to aquire profile data - attempt sign in again
@@ -58,9 +58,9 @@ def delete_user_playlist_tracks(playlist_id):
     playlist_track_id_list = request.json.get("items")
     uri_list = []
     spotify_api_call_iterations = 0
-    for index, playlist_id in enumerate(playlist_track_id_list):
+    for index, track_id in enumerate(playlist_track_id_list):
         # appending instances to list
-        uri_list.append({ "uri": "spotify:track:" + playlist_id })
+        uri_list.append({ "uri": "spotify:track:" + track_id })
          # Handle Spotify 100 delete limit
         if (len(uri_list) == 100 or (len(uri_list) + 100 * spotify_api_call_iterations == len(playlist_track_id_list))):
             spotify_api_call_iterations = spotify_api_call_iterations + 1
@@ -71,3 +71,46 @@ def delete_user_playlist_tracks(playlist_id):
             # reset uri list for new 100 queue
             uri_list = []
     return { "status": "success" }
+
+# post endpoint: Create a new user playlist with items
+@playlist_bp.route("create/<playlist_name>", methods=["POST"])
+def create_user_playlist(playlist_name):
+    # User will need to be logged in to aquire profile data - attempt sign in again
+    if "access_token" not in session:
+        return redirect("/auth/login")
+    # Token has expired and token should be refreshed
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/auth/refresh-token")
+    headers = {
+        "content-type": "application/x-www-form-urlencoded",
+        "Authorization": f"Bearer {session['access_token']}"
+    }
+    # Store inputs in list
+    playlist_track_uri_list = request.json.get("items")
+    # Aquire user id
+    response_me = requests.get(API_BASE_ENDPOINT + "me", headers=headers)
+    if response_me == None:
+        return { "status": "Error: failed to get user info"}
+    user_id = response_me.json()["id"]
+    # Create a new playlist using user_id and playlist_name
+    new_playlist_body = {
+        "name": playlist_name,
+        "public": False
+    }
+    playlists_url = API_BASE_ENDPOINT + "users/" + user_id + "/playlists"
+    response_playlist = requests.post(playlists_url, headers=headers, json=new_playlist_body)
+    if response_playlist == None:
+        return { "status": "Error: failed to create playlist"}
+    playlist_id = response_playlist.json()["id"]
+    # Add tracks to new playlist
+    tracks_object = { 
+        "uris": playlist_track_uri_list,
+        "position": 0
+    }
+    playlist_tracks_url = API_BASE_ENDPOINT + "playlists/" + playlist_id + "/tracks"
+    response_add_tracks = requests.post(playlist_tracks_url, headers=headers, json=tracks_object)
+    # Output final status message
+    if response_add_tracks == None:
+        return { "status": "Error: failed to add tracks to '" + playlist_name + "'" }
+    else:
+        return { "status": "success" }

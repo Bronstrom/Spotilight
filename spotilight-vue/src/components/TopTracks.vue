@@ -46,12 +46,34 @@
         <a class="dropdown-item" @click="limit = 25">Show Top 25</a>
       </div>
     </div>
+    <div class="create-playlist-from-list">
+      <button
+        class="btn btn-primary create-from-list"
+        data-bs-toggle="modal"
+        data-bs-target="#create-playlist-item-modal"
+      >
+        + Create Playlist
+      </button>
+      <SpotilightModal
+        :title="'Create playlist'"
+        id="create-playlist-item-modal"
+        :body="
+          'Enter a name below for the ' +
+          limit +
+          ' tracks and select Create Playlist.'
+        "
+        :actionLabel="'Create playlist'"
+        :inputLabel="'Playlist name'"
+        :inputPlaceholder="'Playlist name'"
+        @action="(name) => createPlaylist(name)"
+      />
+    </div>
     <div
       class="track row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
     >
       <div
         class="track col"
-        v-for="track in curTopTracks?.slice(0, limit)"
+        v-for="track in limitedTopItems()"
         v-bind:key="track.id"
       >
         <div class="track card h-100">
@@ -93,6 +115,7 @@
 </template>
 
 <script>
+import SpotilightModal from "../components/SpotilightModal.vue";
 import axios from "axios";
 
 const DEFAULT_LIMIT_COUNT = 5;
@@ -100,6 +123,9 @@ const MAX_LIMIT_COUNT = 25;
 
 export default {
   name: "TopTracks",
+  components: {
+    SpotilightModal,
+  },
   data() {
     return {
       topTracksShort: [],
@@ -159,6 +185,29 @@ export default {
           this.curTopTracks = this.topTracksMedium;
           break;
       }
+    },
+    limitedTopItems() {
+      return this.curTopTracks?.slice(0, this.limit);
+    },
+    createPlaylist(name) {
+      const uriList = this.limitedTopItems().map((track) => track.uri);
+      console.log(uriList);
+      console.log(name);
+
+      const post_playlist_path = `/playlist/create/${name}`;
+      axios({
+        method: "post",
+        url: post_playlist_path,
+        data: {
+          items: uriList,
+        },
+      })
+        .then((res) => {
+          console.log(res.data);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
   created() {

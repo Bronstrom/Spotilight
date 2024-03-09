@@ -25,6 +25,22 @@
           <p v-if="link">{{ linkInfo }}</p>
           <a v-if="link" :href="link" target="_blank">{{ linkLabel }}</a>
         </div>
+        <div v-if="inputLabel" class="px-5 pb-3 input-group">
+          <label class="sr-only" for="modal-input">{{ inputLabel }}</label>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <div class="input-group-text">Name</div>
+            </div>
+            <input
+              type="text"
+              class="form-control"
+              id="modal-input"
+              :placeholder="inputPlaceholder"
+              :value="inputText"
+              @input="(event) => (inputText = event.target.value)"
+            />
+          </div>
+        </div>
         <div class="modal-footer">
           <button
             type="button"
@@ -38,7 +54,8 @@
             type="button"
             class="btn btn-primary"
             data-bs-dismiss="modal"
-            @click="$emit('action')"
+            @click="$emit('action', inputText), resetInputText()"
+            :disabled="!inputText"
           >
             {{ actionLabel }}
           </button>
@@ -60,6 +77,20 @@ export default {
     link: String,
     linkInfo: String,
     linkLabel: String,
+    inputLabel: String,
+    inputPlaceholder: String,
+  },
+  data() {
+    return {
+      inputText: "",
+    };
+  },
+  methods: {
+    resetInputText() {
+      this.inputText = "";
+    },
   },
 };
 </script>
+
+<!-- TODO: Add validation for the field having input -->
