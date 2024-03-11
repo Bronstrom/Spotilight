@@ -61,7 +61,7 @@ def delete_user_playlist_tracks(playlist_id):
     for index, track_id in enumerate(playlist_track_id_list):
         # appending instances to list
         uri_list.append({ "uri": "spotify:track:" + track_id })
-         # Handle Spotify 100 delete limit
+        # Handle Spotify 100 delete limit
         if (len(uri_list) == 100 or (len(uri_list) + 100 * spotify_api_call_iterations == len(playlist_track_id_list))):
             spotify_api_call_iterations = spotify_api_call_iterations + 1
             tracks_object = { "tracks": uri_list, "snapshot_id": playlist_id + "_snapshot" }
@@ -103,14 +103,18 @@ def create_user_playlist(playlist_name):
         return { "status": "Error: failed to create playlist"}
     playlist_id = response_playlist.json()["id"]
     # Add tracks to new playlist
-    tracks_object = { 
-        "uris": playlist_track_uri_list,
-        "position": 0
-    }
-    playlist_tracks_url = API_BASE_ENDPOINT + "playlists/" + playlist_id + "/tracks"
-    response_add_tracks = requests.post(playlist_tracks_url, headers=headers, json=tracks_object)
-    # Output final status message
-    if response_add_tracks == None:
-        return { "status": "Error: failed to add tracks to '" + playlist_name + "'" }
-    else:
-        return { "status": "success" }
+    i = 0
+    # Handle Spotify 100 delete limit
+    while (i < len(playlist_track_uri_list) / 100):
+        hundredLimitSlice = slice(i * 100, (i + 1) * 100)
+        tracks_object = { 
+            "uris": playlist_track_uri_list[hundredLimitSlice],
+            "position": 0
+        }
+        playlist_tracks_url = API_BASE_ENDPOINT + "playlists/" + playlist_id + "/tracks"
+        response_add_tracks = requests.post(playlist_tracks_url, headers=headers, json=tracks_object)
+        # Output final status message
+        if response_add_tracks == None:
+            return { "status": "Error: failed to add tracks to '" + playlist_name + "'" }
+        i += 1
+    return { "status": "success" }

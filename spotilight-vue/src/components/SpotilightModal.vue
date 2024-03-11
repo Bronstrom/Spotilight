@@ -55,7 +55,7 @@
             class="btn btn-primary"
             data-bs-dismiss="modal"
             @click="$emit('action', inputText), resetInputText()"
-            :disabled="!inputText"
+            :disabled="inputLabel && !inputText"
           >
             {{ actionLabel }}
           </button>

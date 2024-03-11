@@ -46,17 +46,17 @@
         <a class="dropdown-item" @click="limit = 25">Show Top 25</a>
       </div>
     </div>
-    <div class="create-playlist-from-list">
+    <div class="track create-playlist-from-list">
       <button
         class="btn btn-primary create-from-list"
         data-bs-toggle="modal"
-        data-bs-target="#create-playlist-item-modal"
+        data-bs-target="#create-playlist-item-modal-track"
       >
         + Create Playlist
       </button>
       <SpotilightModal
-        :title="'Create playlist'"
-        id="create-playlist-item-modal"
+        title="Create playlist"
+        id="create-playlist-item-modal-track"
         :body="
           'Enter a name below for the ' +
           limit +

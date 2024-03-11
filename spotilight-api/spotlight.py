@@ -42,3 +42,19 @@ def get_top_artists(time_range, offset, count):
     top_artists = response.json()
     return jsonify(top_artists)
 
+# artist top tracks endpoint: Get an artist's top tracks
+@spotlight_bp.route("/<artist_id>/top-tracks", methods=["GET"])
+def get_artist_top_tracks(artist_id):
+    # User will need to be logged in to aquire profile data - attempt sign in again
+    if "access_token" not in session:
+        return redirect("/auth/login")
+    # Token has expired and token should be refreshed
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/auth/refresh-token")
+    headers = {
+        "content-type": "application/x-www-form-urlencoded",
+        "Authorization": f"Bearer {session['access_token']}"
+    }
+    response = requests.get(API_BASE_ENDPOINT + "artists/" + artist_id + "/top-tracks", headers=headers)
+    artist_top_tracks = response.json()
+    return jsonify(artist_top_tracks)
