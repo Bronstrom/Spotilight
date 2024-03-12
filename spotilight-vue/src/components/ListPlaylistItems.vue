@@ -118,7 +118,18 @@
     />
     <label class="btn btn-outline-danger" for="list-selection">List</label>
   </div>
-  <div v-if="selectedItems?.length > 0" class="selected-item-options">
+  <div v-if="isTypeTrack() && selectionMode" class="selected-items">
+    <button type="button" class="btn btn-primary" @click="selectAllItems">
+      Select All Items
+    </button>
+    <button type="button" class="btn btn-primary" @click="clearSelectedItems">
+      Unselect All Items
+    </button>
+  </div>
+  <div
+    v-if="isTypePlaylist() && selectedItems?.length > 0"
+    class="selected-item-options"
+  >
     <button
       class="btn btn-primary delete-selected-item"
       data-bs-toggle="modal"
@@ -165,7 +176,7 @@
       :actionLabel="'Create playlist'"
       :inputLabel="'Playlist name'"
       :inputPlaceholder="'Playlist name'"
-      @action="(name) => createPlaylist(name)"
+      @action="(name) => createPlaylistFromPlaylistID(name)"
     />
     <button
       v-if="selectedItems?.length > 1"
@@ -189,6 +200,34 @@
       :inputLabel="'Playlist name'"
       :inputPlaceholder="'Playlist name'"
       @action="(name) => mergePlaylists(name)"
+    />
+  </div>
+  <div
+    v-if="isTypeTrack() && selectedItems?.length > 0"
+    class="selected-item-options"
+  >
+    <button
+      v-if="selectedItems?.length > 0"
+      class="btn btn-primary create-playlist-from-selected-items"
+      data-bs-toggle="modal"
+      data-bs-target="#create-playlist-item-modal"
+    >
+      Create Playlist from Selected Items
+    </button>
+    <SpotilightModal
+      :title="'Create ' + playlistItemType"
+      id="create-playlist-item-modal"
+      :body="
+        'Enter a name below for the new ' +
+        playlistItemType +
+        ' containing the ' +
+        selectedItems?.length +
+        ' and select Create Playlist.'
+      "
+      :actionLabel="'Create playlist'"
+      :inputLabel="'Playlist name'"
+      :inputPlaceholder="'Playlist name'"
+      @action="(name) => createPlaylistFromSelectedTracks(name)"
     />
   </div>
   <!-- Render grid view -->
@@ -476,8 +515,16 @@ export default {
     goToPlaylistPage(playlistID) {
       window.location.href = `/playlist/${playlistID}`;
     },
-    resetSelectedItems() {
+    clearSelectedItems() {
       this.selectedItems = [];
+    },
+    selectAllItems() {
+      this.selectedItems = this.filterList(this.sortedPlaylistItems)?.map(
+        (item) => (this.isTypeTrack() ? item.track.id : item.id)
+      );
+    },
+    resetSelectedItems() {
+      this.clearSelectedItems();
       this.selectionMode = false;
     },
     deleteSuccess(output) {
@@ -543,6 +590,47 @@ export default {
         });
     },
     // TODO: Refactor mergePlaylist and createPlaylist
+    createPlaylistFromPlaylistID(name) {
+      const playlistId = this.selectedItems[0];
+      let playlist_endpoint = "playlist/" + playlistId;
+      axios
+        .get(playlist_endpoint)
+        .then((res) => {
+          const playlist = res.data;
+          let trackList = playlist.tracks.items;
+
+          // TODO: Consider instead of grabbing all of these values and determining the next link, use `playlist.tracks.next`
+          // for the link. Potentially may need to create a new function to handle axios calls and determine when there is
+          // no `next` field.
+          let limit = playlist.tracks.limit;
+          let offset = playlist.tracks.offset;
+          let total = playlist.tracks.total;
+
+          // Aquire all tracks till reaching total track count
+          offset = offset + limit;
+          if (offset >= total) {
+            this.createPlaylistFromUris(trackList, name);
+          }
+          for (offset; offset < total; offset = offset + limit) {
+            playlist_endpoint = `playlist/${playlistId}/${offset}/${limit}`;
+            axios
+              .get(playlist_endpoint)
+              .then((res) => {
+                trackList = [...trackList, ...res.data?.items];
+                if (offset >= total) {
+                  this.createPlaylistFromUris(trackList, name);
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    // TODO: Refactor mergePlaylist and createPlaylist
     mergePlaylists(name) {
       let trackList = [];
       this.selectedItems.forEach((playlistId, playlistIndex) => {
@@ -591,41 +679,25 @@ export default {
           });
       });
     },
-    createPlaylist(name) {
-      const playlistId = this.selectedItems[0];
-      let playlist_endpoint = "playlist/" + playlistId;
-      axios
-        .get(playlist_endpoint)
+    createPlaylistFromSelectedTracks(name) {
+      const uriList = this.selectedItems.map(
+        (trackItem) => "spotify:track:" + trackItem
+      );
+      console.log(uriList);
+      console.log(name);
+
+      const post_playlist_path = `/playlist/create/${name}`;
+      axios({
+        method: "post",
+        url: post_playlist_path,
+        data: {
+          items: uriList,
+        },
+      })
         .then((res) => {
-          const playlist = res.data;
-          let trackList = playlist.tracks.items;
-
-          // TODO: Consider instead of grabbing all of these values and determining the next link, use `playlist.tracks.next`
-          // for the link. Potentially may need to create a new function to handle axios calls and determine when there is
-          // no `next` field.
-          let limit = playlist.tracks.limit;
-          let offset = playlist.tracks.offset;
-          let total = playlist.tracks.total;
-
-          // Aquire all tracks till reaching total track count
-          offset = offset + limit;
-          if (offset >= total) {
-            this.createPlaylistFromUris(trackList, name);
-          }
-          for (offset; offset < total; offset = offset + limit) {
-            playlist_endpoint = `playlist/${playlistId}/${offset}/${limit}`;
-            axios
-              .get(playlist_endpoint)
-              .then((res) => {
-                trackList = [...trackList, ...res.data?.items];
-                if (offset >= total) {
-                  this.createPlaylistFromUris(trackList, name);
-                }
-              })
-              .catch((err) => {
-                console.error(err);
-              });
-          }
+          console.log(res.data);
+          this.resetSelectedItems();
+          this.$emit("created");
         })
         .catch((err) => {
           console.error(err);
