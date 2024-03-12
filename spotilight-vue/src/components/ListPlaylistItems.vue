@@ -152,7 +152,7 @@
       data-bs-toggle="modal"
       data-bs-target="#duplicate-playlist-item-modal"
     >
-      Duplicate Selected Items
+      Duplicate Playlist
     </button>
     <SpotilightModal
       :title="'Duplicate ' + playlistItemType"
@@ -166,6 +166,29 @@
       :inputLabel="'Playlist name'"
       :inputPlaceholder="'Playlist name'"
       @action="(name) => createPlaylist(name)"
+    />
+    <button
+      v-if="selectedItems?.length > 1"
+      class="btn btn-primary merge-selected-item"
+      data-bs-toggle="modal"
+      data-bs-target="#merge-playlist-item-modal"
+    >
+      Merge Selected Items
+    </button>
+    <SpotilightModal
+      :title="'Merge ' + playlistItemType + 's'"
+      id="merge-playlist-item-modal"
+      :body="
+        'Enter a name for the combination of ' +
+        selectedItems?.length +
+        ' ' +
+        playlistItemType +
+        's and select Create Playlist.'
+      "
+      :actionLabel="'Create playlist'"
+      :inputLabel="'Playlist name'"
+      :inputPlaceholder="'Playlist name'"
+      @action="(name) => mergePlaylists(name)"
     />
   </div>
   <!-- Render grid view -->
@@ -519,8 +542,56 @@ export default {
           console.error(err);
         });
     },
+    // TODO: Refactor mergePlaylist and createPlaylist
+    mergePlaylists(name) {
+      let trackList = [];
+      this.selectedItems.forEach((playlistId, playlistIndex) => {
+        playlistId = this.selectedItems[playlistIndex];
+        let playlist_endpoint = "playlist/" + playlistId;
+        axios
+          .get(playlist_endpoint)
+          .then((res) => {
+            const playlist = res.data;
+            trackList = [...trackList, ...playlist.tracks.items];
+            // TODO: Consider instead of grabbing all of these values and determining the next link, use `playlist.tracks.next`
+            // for the link. Potentially may need to create a new function to handle axios calls and determine when there is
+            // no `next` field.
+            let limit = playlist.tracks.limit;
+            let offset = playlist.tracks.offset;
+            let total = playlist.tracks.total;
+
+            // Aquire all tracks till reaching total track count
+            offset = offset + limit;
+            if (
+              offset >= total &&
+              playlistIndex === this.selectedItems.length - 1
+            ) {
+              this.createPlaylistFromUris(trackList, name);
+            }
+            for (offset; offset < total; offset = offset + limit) {
+              playlist_endpoint = `playlist/${playlistId}/${offset}/${limit}`;
+              axios
+                .get(playlist_endpoint)
+                .then((res) => {
+                  trackList = [...trackList, ...res.data?.items];
+                  if (
+                    offset >= total &&
+                    playlistIndex === this.selectedItems.length - 1
+                  ) {
+                    this.createPlaylistFromUris(trackList, name);
+                  }
+                })
+                .catch((err) => {
+                  console.error(err);
+                });
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+          });
+      });
+    },
     createPlaylist(name) {
-      // TODO: Determine why "playlist/" is not required before this api call, may have to do with redirect on front-end
       const playlistId = this.selectedItems[0];
       let playlist_endpoint = "playlist/" + playlistId;
       axios
