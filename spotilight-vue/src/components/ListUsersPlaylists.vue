@@ -5,6 +5,7 @@
       playlistItemType="playlist"
       :originalPlaylistItems="originalPlaylistList"
       @deleted="aquireAllPlaylists"
+      @created="aquireAllPlaylists"
     />
   </div>
 </template>
