@@ -146,6 +146,27 @@
       :actionLabel="'Delete ' + playlistItemType + '(s)'"
       @action="deleteItems"
     />
+    <button
+      v-if="selectedItems?.length === 1"
+      class="btn btn-primary duplicate-selected-item"
+      data-bs-toggle="modal"
+      data-bs-target="#duplicate-playlist-item-modal"
+    >
+      Duplicate Selected Items
+    </button>
+    <SpotilightModal
+      :title="'Duplicate ' + playlistItemType"
+      id="duplicate-playlist-item-modal"
+      :body="
+        'Enter a name below for the new ' +
+        playlistItemType +
+        ' and select Create Playlist.'
+      "
+      :actionLabel="'Create playlist'"
+      :inputLabel="'Playlist name'"
+      :inputPlaceholder="'Playlist name'"
+      @action="(name) => createPlaylist(name)"
+    />
   </div>
   <!-- Render grid view -->
   <div
@@ -474,6 +495,70 @@ export default {
             console.error(err);
           });
       }
+    },
+    // TODO: This function can be placed in a helper function file
+    createPlaylistFromUris(trackList, name) {
+      const uriList = trackList.map((trackItem) => trackItem.track.uri);
+      console.log(uriList);
+      console.log(name);
+
+      const post_playlist_path = `/playlist/create/${name}`;
+      axios({
+        method: "post",
+        url: post_playlist_path,
+        data: {
+          items: uriList,
+        },
+      })
+        .then((res) => {
+          console.log(res.data);
+          this.resetSelectedItems();
+          this.$emit("created");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    createPlaylist(name) {
+      // TODO: Determine why "playlist/" is not required before this api call, may have to do with redirect on front-end
+      const playlistId = this.selectedItems[0];
+      let playlist_endpoint = "playlist/" + playlistId;
+      axios
+        .get(playlist_endpoint)
+        .then((res) => {
+          const playlist = res.data;
+          let trackList = playlist.tracks.items;
+
+          // TODO: Consider instead of grabbing all of these values and determining the next link, use `playlist.tracks.next`
+          // for the link. Potentially may need to create a new function to handle axios calls and determine when there is
+          // no `next` field.
+          let limit = playlist.tracks.limit;
+          let offset = playlist.tracks.offset;
+          let total = playlist.tracks.total;
+
+          // Aquire all tracks till reaching total track count
+          offset = offset + limit;
+          if (offset >= total) {
+            this.createPlaylistFromUris(trackList, name);
+          }
+          for (offset; offset < total; offset = offset + limit) {
+            playlist_endpoint = `playlist/${playlistId}/${offset}/${limit}`;
+            axios
+              .get(playlist_endpoint)
+              .then((res) => {
+                trackList = [...trackList, ...res.data?.items];
+                if (offset >= total) {
+                  this.createPlaylistFromUris(trackList, name);
+                }
+              })
+              .catch((err) => {
+                console.error(err);
+              });
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+        });
     },
   },
 };
