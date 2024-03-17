@@ -20,18 +20,18 @@
       {{ sortLabel }}
     </button>
     <div class="dropdown-menu" aria-labelledby="sort-playlists-dropdown">
-      <a v-if="isTypeTrack" class="dropdown-item" @click="sortUnsorted"
+      <a v-if="isTypeTrack()" class="dropdown-item" @click="sortUnsorted"
         >Unsorted (User organized)</a
       >
       <a class="dropdown-item" @click="sortNewestFirst">Newest First</a>
       <a class="dropdown-item" @click="sortOldestFirst">Oldest First</a>
       <a class="dropdown-item" @click="sortAlphAsc">Title Ascending</a>
       <a class="dropdown-item" @click="sortAlphDesc">Title Descending</a>
-      <template v-if="isTypePlaylist">
+      <template v-if="isTypePlaylist()">
         <a class="dropdown-item" @click="sortByOwner">Owner</a>
         <a class="dropdown-item" @click="sortByTotalTracks">Total Tracks</a>
       </template>
-      <template v-if="isTypeTrack">
+      <template v-if="isTypeTrack()">
         <a class="dropdown-item" @click="sortByArtist">Lead Artist</a>
       </template>
     </div>
@@ -53,7 +53,7 @@
         @click="(filterLabel = 'No Filter'), (filterType = 'none')"
         >No Filter</a
       >
-      <template v-if="isTypePlaylist">
+      <template v-if="isTypePlaylist()">
         <a
           class="dropdown-item"
           @click="
@@ -69,7 +69,7 @@
           >Private Playlists Only</a
         >
       </template>
-      <template v-if="isTypeTrack">
+      <template v-if="isTypeTrack()">
         <a
           class="dropdown-item"
           @click="
@@ -268,16 +268,16 @@
       <tr>
         <th>Image</th>
         <th>Title</th>
-        <th v-if="isTypePlaylist">Owner</th>
-        <th v-if="isTypePlaylist">Visibility</th>
-        <th v-if="isTypePlaylist">Description</th>
-        <th v-if="isTypePlaylist">Track Count</th>
-        <th v-if="isTypeTrack">Added At</th>
-        <th v-if="isTypeTrack">Local</th>
-        <th v-if="isTypeTrack">Explicit</th>
-        <th v-if="isTypeTrack">Album/Single</th>
-        <th v-if="isTypeTrack">Duration</th>
-        <th v-if="isTypeTrack">Artist</th>
+        <th v-if="isTypePlaylist()">Owner</th>
+        <th v-if="isTypePlaylist()">Visibility</th>
+        <th v-if="isTypePlaylist()">Description</th>
+        <th v-if="isTypePlaylist()">Track Count</th>
+        <th v-if="isTypeTrack()">Added At</th>
+        <th v-if="isTypeTrack()">Local</th>
+        <th v-if="isTypeTrack()">Explicit</th>
+        <th v-if="isTypeTrack()">Album/Single</th>
+        <th v-if="isTypeTrack()">Duration</th>
+        <th v-if="isTypeTrack()">Artist</th>
         <th>Link</th>
       </tr>
     </thead>
