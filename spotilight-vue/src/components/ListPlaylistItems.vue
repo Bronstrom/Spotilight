@@ -126,10 +126,7 @@
       Unselect All Items
     </button>
   </div>
-  <div
-    v-if="isTypePlaylist() && selectedItems?.length > 0"
-    class="selected-item-options"
-  >
+  <div v-if="selectedItems?.length > 0" class="selected-item-options">
     <button
       class="btn btn-primary delete-selected-item"
       data-bs-toggle="modal"
@@ -157,6 +154,11 @@
       :actionLabel="'Delete ' + playlistItemType + '(s)'"
       @action="deleteItems"
     />
+  </div>
+  <div
+    v-if="isTypePlaylist() && selectedItems?.length > 0"
+    class="selected-item-options"
+  >
     <button
       v-if="selectedItems?.length === 1"
       class="btn btn-primary duplicate-selected-item"

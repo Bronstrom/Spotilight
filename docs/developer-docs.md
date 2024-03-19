@@ -63,7 +63,7 @@ BACK_END_URL=http://localhost:5000/
 
 #### Running the back-end the first time
 
-* Install all of the required dependencies recursively with the following command:
+* On a fresh clone/fork of Spotilight, open a new terminal session and navigate to `spotilight-api` within your local clone of clone/fork of Spotilight. Install all of the required dependencies recursively with the following command:
 
 ```
 pip install -r requirements.txt
@@ -83,7 +83,7 @@ Then, run the following command to start up the back-end:
 python main.py
 ```
 
-#### Adding dependencies to the back-end
+#### Adding new packages/dependencies to the back-end
 
 If you plan to add a new dependencies to the back-end, use the following command to add them to `requirements.txt`:
 
@@ -95,7 +95,7 @@ pip freeze > requirements.txt
 
 #### Running the front-end the first time
 
-On a fresh clone/fork of Spotilight, you will need to install the necessary dependencies. Using the Node package manager run the following command:
+You will also need to install the necessary packages and dependencies for the front-end. Open a second terminal window and navigate to `spotilight-vue`. Using the Node package manager run the following command:
 
 ```
 npm install
@@ -103,8 +103,12 @@ npm install
 
 #### Running the front-end after install
 
-After installing the node dependencies, all you need to do is run: 
+After installing the node dependencies, all you need to do is run the following command in `spotilight-vue`: 
 
 ```
 npm run serve
 ```
+
+### Opening the application in the browser
+
+Once having the front-end and back-end running in a terminal session, you can navigate to `http://localhost:8080/` in your browser to interact with the full application.
