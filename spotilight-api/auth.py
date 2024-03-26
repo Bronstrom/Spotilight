@@ -41,6 +41,14 @@ def set_session_token(token):
     session["expires_at"] = datetime.now().timestamp() + token["expires_in"]
     session["refresh_token"] = token["refresh_token"]
 
+def reset_session_token():
+    # Set all session token fields to None
+    session["access_token"] = None
+    session["token_type"] = None
+    session["scope"] = None
+    session["expires_at"] = None
+    session["refresh_token"] = None
+
 # "/login" endpoint: Redirect to Spotify's login page with scopes outlined
 @auth_bp.route("/login", methods=["GET"])
 def login():
@@ -66,6 +74,7 @@ def account():
 # "/logout" endpoint: Completely logs the user out and removes cookies
 @auth_bp.route("/logout", methods=["GET"])
 def logout():
+    reset_session_token()
     return {"url": LOGOUT_URL}
 
 # "/callback" endpoint

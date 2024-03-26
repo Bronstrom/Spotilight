@@ -1,9 +1,9 @@
 <template>
-  <div class="top-artists m-5">
+  <div class="top-artists">
     <h3>Top Artists</h3>
     <div class="dropdown time-range">
       <button
-        class="btn btn-primary dropdown-toggle"
+        class="btn btn-primary-accent-1 dropdown-toggle"
         type="button"
         id="top-artist-frequency-button"
         data-bs-toggle="dropdown"

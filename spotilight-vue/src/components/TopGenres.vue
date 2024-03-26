@@ -1,5 +1,5 @@
 <template>
-  <div class="top-genres m-5">
+  <div class="top-genres">
     <div class="dropdown time-range">
       <button
         class="btn btn-primary dropdown-toggle"
@@ -41,7 +41,7 @@
       </p>
     </div>
     <div class="chart container">
-      <h3>Top Sub-Genre:</h3>
+      <h3>Top Sub-Genres:</h3>
       <Doughnut
         v-if="chartloaded"
         id="top-subgenres"
@@ -104,6 +104,12 @@ export default {
         animation: {
           animateScale: true,
         },
+        // Hide legend
+        plugins: {
+          legend: {
+            display: false,
+          },
+        },
         responsive: true,
       },
       chartDataSubgenres: {
@@ -115,6 +121,12 @@ export default {
         rotation: Math.PI,
         animation: {
           animateScale: true,
+        },
+        // Hide legend
+        plugins: {
+          legend: {
+            display: false,
+          },
         },
         responsive: true,
       },
@@ -520,13 +532,24 @@ export default {
       });
 
       let spotifyCategoryGenreCount = {};
+      let spotifySubGenreCount = {};
 
       // Get the top classification of sub genres provided by artists
       for (const [userGenreKey, userGenreValue] of Object.entries(
         userGenreCount
       )) {
+        // Set sub-genres - ensure that a top level categorized genre isn't included
+        if (!spotifyGenreList?.genres.includes(userGenreKey)) {
+          if (spotifySubGenreCount[userGenreKey] === undefined) {
+            spotifySubGenreCount[userGenreKey] = userGenreValue;
+          } else {
+            spotifySubGenreCount[userGenreKey] =
+              spotifySubGenreCount[userGenreKey] + userGenreValue;
+          }
+        }
         let foundCategoryGenre = false;
         spotifyGenreList?.genres?.forEach((spotifyGenre, index) => {
+          // Set high level "categorized" genres
           if (this.userGenreMatchSpotifyGenres(userGenreKey, spotifyGenre)) {
             /*console.log(
               "userGenreKey: " +
@@ -546,6 +569,8 @@ export default {
             index === spotifyGenreList.genres.length - 1
           ) {
             //console.log(userGenreKey + " was unclassified");
+            // TODO: This unclassified data should probably be used differently or not
+            // included in the categorized genre list
             if (spotifyCategoryGenreCount["unclassified"] === undefined) {
               spotifyCategoryGenreCount["unclassified"] = userGenreValue;
             } else {
@@ -556,13 +581,7 @@ export default {
         });
       }
 
-      // TODO: Next compare with genre seed recomendations - find at least one match (could be multiple)
-      // for these genres - new larger has map (inlude hash counts for current list)
-      // ex: indie rock - count 7
-      // matches with indie: "indie rock".contains("indie") - now count +7
-      // matches with rock: "indie rock".contains("rock") - now count +7
-      // If could not find match put this in unknown list for now
-      return [userGenreCount, spotifyCategoryGenreCount];
+      return [spotifySubGenreCount, spotifyCategoryGenreCount];
     },
     userGenreMatchSpotifyGenres(userGenre, spotifyGenre) {
       const userGenreAltered = userGenre.toLowerCase().replace("-", " ");

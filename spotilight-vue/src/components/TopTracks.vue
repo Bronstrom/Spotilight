@@ -1,5 +1,5 @@
 <template>
-  <div class="top-tracks m-5">
+  <div class="top-tracks">
     <h3>Top Tracks</h3>
     <div class="dropdown time-range">
       <button

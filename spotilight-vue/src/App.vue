@@ -1,5 +1,9 @@
 <template>
-  <NavigationBar />
+  <NavigationBar
+    :userLoggedIn="userLoggedIn"
+    :loggedIn="loggedIn"
+    :loggedOut="loggedOut"
+  />
   <router-view />
 </template>
 
@@ -10,6 +14,17 @@ export default {
   name: "App",
   components: {
     NavigationBar,
+  },
+  data() {
+    return {
+      userLoggedIn: false,
+    };
+  },
+  loggedIn() {
+    this.userLoggedIn = true;
+  },
+  loggedOut() {
+    this.userLoggedIn = false;
   },
 };
 </script>
@@ -29,10 +44,22 @@ nav {
 
 nav a {
   font-weight: bold;
-  color: #2c3e50;
+  color: #ffffff;
+  text-decoration: none;
 }
 
 nav a.router-link-exact-active {
   color: #42b983;
+}
+
+.main-content-gutter {
+  padding-left: 10vw;
+  padding-right: 10vw;
+}
+
+.space-between {
+  display: flex;
+  justify-content: space-between;
+  width: 100vw;
 }
 </style>
