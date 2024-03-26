@@ -1,0 +1,15 @@
+// Your variable overrides
+$primary: #e5732d;
+$secondary: #999999;
+$success: #2d732d;
+$danger: #922e2e;
+$dark-bg-subtle: #111111;
+$primary-accent-1: #2fe634;
+$primary-accent-2: #922ee6;
+$primary-accent-3: #922e2e;
+$primary-accent-4: #2d732d;
+$dark: #333333;
+$body: #999999;
+
+// Bootstrap and its default variables
+@import '../node_modules/bootstrap/scss/bootstrap';
