@@ -3,87 +3,75 @@
     class="navbar bg-dark navbar-expand-lg border-bottom border-body"
     data-bs-theme="dark"
   >
-    <div class="container-fluid">
-      <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" height="25" />
-      <a class="navbar-brand" href="/">Spotilight</a>
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
-        <span class="navbar-toggler-icon"></span>
-      </button>
+    <div class="main-content-gutter space-between">
+      <div class="navbar-brand">
+        <a :href="userLoggedIn ? '/user-profile' : '/'">
+          <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" height="25" />
+          Spotilight</a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      </div>
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="/">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/playlists">Playlists</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/spotlight">Spotlight</a>
-          </li>
-          <li class="nav-item">
             <a class="nav-link" href="/about">About</a>
           </li>
-          <li class="nav-item">
-            <a
-              class="nav-link disabled"
-              aria-disabled="true"
-              href="/user-profile"
-            >
-              Profile
-            </a>
+          <li v-if="userLoggedIn" class="nav-item">
+            <a class="nav-link" href="/playlists">Playlists</a>
           </li>
-          <li
-            class="dropdown"
-            @v-show="
-              {
-                profileIcon;
-              }
-            "
-          >
-            <a
-              class="dropdown-toggle"
-              role="button"
-              data-bs-toggle="dropdown"
-              aria-expanded="false"
-            >
-              <template v-if="profileIcon !== ''">
-                <img
-                  :src="profileIcon"
-                  class="rounded-circle"
-                  height="50"
-                  alt="User Profile"
-                  loading="lazy"
-                />
-              </template>
-              <span v-else style="font-size: 2rem">O</span>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <a
-                  v-if="profileIcon !== ''"
-                  class="dropdown-item"
-                  @click="handleAccountLogout()"
-                  >Logout</a
-                >
-                <a
-                  v-else
-                  class="dropdown-item"
-                  @click="handleSpotifyAuthenticate()"
-                  >Login</a
-                >
-              </li>
-            </ul>
+          <li v-if="userLoggedIn" class="nav-item">
+            <a class="nav-link" href="/spotlight">Spotlight</a>
           </li>
         </ul>
-        <span> </span>
+      </div>
+      <div
+        class="dropdown"
+        @v-show="
+          {
+            profileIcon;
+          }
+        "
+      >
+        <a
+          class="dropdown-toggle"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <template v-if="profileIcon !== ''">
+            <img
+              :src="profileIcon"
+              class="rounded-circle"
+              height="50"
+              alt="User Profile"
+              loading="lazy"
+            />
+          </template>
+          <span v-else style="font-size: 2rem">O</span>
+        </a>
+        <ul class="dropdown-menu">
+          <li>
+            <a
+              v-if="userLoggedIn"
+              class="dropdown-item"
+              @click="handleAccountLogout()"
+              >Logout</a
+            >
+            <a v-else class="dropdown-item" @click="handleSpotifyAuthenticate()"
+              >Login</a
+            >
+          </li>
+        </ul>
       </div>
     </div>
   </nav>
@@ -97,6 +85,7 @@ export default {
   data() {
     return {
       profileIcon: "",
+      userLoggedIn: false,
     };
   },
   methods: {
@@ -106,6 +95,13 @@ export default {
         .get(path)
         .then((res) => {
           this.profileIcon = res.data;
+          // This API call is also used as the basic method to know if a user is signed-in
+          this.userLoggedIn = res.data !== "";
+          if (res.data !== "") {
+            this.$emit("loggedIn");
+          } else {
+            this.$emit("loggedOut");
+          }
         })
         .catch((err) => {
           console.error(err);

@@ -1,5 +1,5 @@
 <template>
-  <div class="playlists">
+  <div class="playlists main-content-gutter">
     <ListUsersPlaylists />
   </div>
 </template>

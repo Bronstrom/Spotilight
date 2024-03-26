@@ -20,45 +20,77 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <div class="modal-body">
-          <p>{{ body }}</p>
-          <p v-if="link">{{ linkInfo }}</p>
-          <a v-if="link" :href="link" target="_blank">{{ linkLabel }}</a>
-        </div>
-        <div v-if="inputLabel" class="px-5 pb-3 input-group">
-          <label class="sr-only" for="modal-input">{{ inputLabel }}</label>
-          <div class="input-group">
-            <div class="input-group-prepend">
-              <div class="input-group-text">Name</div>
-            </div>
-            <input
-              type="text"
-              class="form-control"
-              id="modal-input"
-              :placeholder="inputPlaceholder"
-              :value="inputText"
-              @input="(event) => (inputText = event.target.value)"
-            />
+        <div v-if="actionCompletionFlow === 'started'">
+          <div class="spinner-border text-primary" role="status"></div>
+          <div class="modal-body">
+            <p>Processing . . .</p>
+            <p>Please wait as the item is created.</p>
           </div>
         </div>
-        <div class="modal-footer">
-          <button
-            type="button"
-            class="btn btn-secondary"
-            data-bs-dismiss="modal"
-          >
-            Close
-          </button>
-          <!-- TODO: Add @on-click -->
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-dismiss="modal"
-            @click="$emit('action', inputText), resetInputText()"
-            :disabled="inputLabel && !inputText"
-          >
-            {{ actionLabel }}
-          </button>
+        <div v-else-if="actionCompletionFlow === 'finished'">
+          <div class="modal-body">
+            <p>Playlist Finished Creating</p>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+        <div v-else>
+          <div class="modal-body">
+            <p>{{ body }}</p>
+            <p v-if="link">{{ linkInfo }}</p>
+            <a v-if="link" :href="link" target="_blank">{{ linkLabel }}</a>
+          </div>
+          <div v-if="inputLabel" class="px-5 pb-3 input-group">
+            <label class="sr-only" for="modal-input">{{ inputLabel }}</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <div class="input-group-text">Name</div>
+              </div>
+              <input
+                type="text"
+                class="form-control"
+                id="modal-input"
+                :placeholder="inputPlaceholder"
+                :value="inputText"
+                @input="(event) => (inputText = event.target.value)"
+              />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+            <button
+              v-if="!actionCompletionFlow"
+              type="button"
+              class="btn btn-primary"
+              data-bs-dismiss="modal"
+              @click="$emit('action', inputText), resetInputText()"
+              :disabled="inputLabel && !inputText"
+            >
+              {{ actionLabel }}
+            </button>
+            <button
+              v-else
+              type="button"
+              class="btn btn-primary"
+              @click="$emit('action', inputText), resetInputText()"
+              :disabled="inputLabel && !inputText"
+            >
+              {{ actionLabel }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -70,6 +102,7 @@ export default {
   name: "SpotilightModal",
   emits: ["action"],
   props: {
+    actionCompletionFlow: String,
     id: String,
     title: String,
     body: String,

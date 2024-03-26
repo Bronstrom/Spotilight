@@ -1,5 +1,5 @@
 <template>
-  <div class="playlist m-5">
+  <div class="playlist">
     <button type="button" class="btn btn-primary" @click="goToPlaylistsList">
       Return to Playlists List
     </button>

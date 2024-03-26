@@ -135,6 +135,7 @@
       Delete Selected Items
     </button>
     <SpotilightModal
+      :actionCompletionFlow="null"
       :title="'Delete ' + playlistItemType + '(s)'"
       id="delete-playlist-item-modal"
       :body="
@@ -168,6 +169,7 @@
       Duplicate Playlist
     </button>
     <SpotilightModal
+      :actionCompletionFlow="null"
       :title="'Duplicate ' + playlistItemType"
       id="duplicate-playlist-item-modal"
       :body="
@@ -185,10 +187,12 @@
       class="btn btn-primary merge-selected-item"
       data-bs-toggle="modal"
       data-bs-target="#merge-playlist-item-modal"
+      @click="resetActionCompletionFlow"
     >
       Merge Selected Items
     </button>
     <SpotilightModal
+      :actionCompletionFlow="actionCompletionFlow"
       :title="'Merge ' + playlistItemType + 's'"
       id="merge-playlist-item-modal"
       :body="
@@ -201,7 +205,12 @@
       :actionLabel="'Create playlist'"
       :inputLabel="'Playlist name'"
       :inputPlaceholder="'Playlist name'"
-      @action="(name) => mergePlaylists(name)"
+      @action="
+        (name) => {
+          actionStarted();
+          mergePlaylists(name);
+        }
+      "
     />
   </div>
   <div
@@ -217,6 +226,7 @@
       Create Playlist from Selected Items
     </button>
     <SpotilightModal
+      :actionCompletionFlow="null"
       :title="'Create ' + playlistItemType"
       id="create-playlist-item-modal"
       :body="
@@ -319,7 +329,7 @@ import axios from "axios";
 
 export default {
   name: "ListUsersPlaylists",
-  emits: ["deleted"],
+  emits: ["deleted", "created"],
   components: {
     GridShowPlaylist,
     GridShowTrack,
@@ -342,12 +352,13 @@ export default {
       sortedPlaylistItems: null,
       filtedPlaylistItems: null,
       viewType: "grid",
+      actionCompletionFlow: "finished",
     };
   },
   watch: {
     $props: {
       handler() {
-        if (this.originalPlaylistItems !== null) {
+        if (this.originalPlaylistItems) {
           if (this.isTypeTrack()) {
             this.sortUnsorted();
           } else {
@@ -383,6 +394,12 @@ export default {
     },
     getPlaylistItemId(item) {
       return this.isTypeTrack() ? item.track.id : item.id;
+    },
+    actionStarted() {
+      this.actionCompletionFlow = "started";
+    },
+    resetActionCompletionFlow() {
+      this.actionCompletionFlow = "ready";
     },
     handleSelection(id) {
       let selection = this.selectedItems;
@@ -553,6 +570,7 @@ export default {
           });
       } else {
         const delete_tracks_path = `/playlist/${this.itemId}/delete-tracks`;
+        console.log("call delete tracks");
         axios({
           method: "delete",
           url: delete_tracks_path,
@@ -584,7 +602,8 @@ export default {
       })
         .then((res) => {
           console.log(res.data);
-          this.resetSelectedItems();
+          // TODO: This crashes the modal when causing it to wait
+          //this.resetSelectedItems();
           this.$emit("created");
         })
         .catch((err) => {
@@ -657,6 +676,7 @@ export default {
               playlistIndex === this.selectedItems.length - 1
             ) {
               this.createPlaylistFromUris(trackList, name);
+              this.actionCompletionFlow = "finished";
             }
             for (offset; offset < total; offset = offset + limit) {
               playlist_endpoint = `playlist/${playlistId}/${offset}/${limit}`;
@@ -669,6 +689,7 @@ export default {
                     playlistIndex === this.selectedItems.length - 1
                   ) {
                     this.createPlaylistFromUris(trackList, name);
+                    this.actionCompletionFlow = "finished";
                   }
                 })
                 .catch((err) => {

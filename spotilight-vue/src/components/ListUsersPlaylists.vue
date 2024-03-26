@@ -1,6 +1,7 @@
 <template>
-  <div class="playlists m-5">
+  <div class="playlists">
     <h3>List Playlists</h3>
+    {{ console.log(originalPlaylistList) }}
     <ListPlaylistItems
       playlistItemType="playlist"
       :originalPlaylistItems="originalPlaylistList"
@@ -42,7 +43,7 @@ export default {
           this.originalPlaylistList = res.data?.items;
           total = res.data.total;
           // Aquire all playlists till reaching total playlist count
-          offset = offset + limit;
+          offset = offset + limit + 1;
           for (offset; offset < total; offset = offset + limit) {
             playlists_endpoint = `playlists/${offset}/${limit}`;
             axios
