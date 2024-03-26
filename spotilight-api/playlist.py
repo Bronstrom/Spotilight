@@ -64,9 +64,9 @@ def delete_user_playlist_tracks(playlist_id):
         # Handle Spotify 100 delete limit
         if (len(uri_list) == 100 or (len(uri_list) + 100 * spotify_api_call_iterations == len(playlist_track_id_list))):
             spotify_api_call_iterations = spotify_api_call_iterations + 1
-            tracks_object = { "tracks": uri_list, "snapshot_id": playlist_id + "_snapshot" }
+            tracks_object = { "tracks": uri_list }
             print(tracks_object)
-            response = requests.delete(API_BASE_ENDPOINT + "playlists/" + playlist_id + "/tracks", headers=headers, data=tracks_object )
+            response = requests.delete(API_BASE_ENDPOINT + "playlists/" + playlist_id + "/tracks", headers=headers, json=tracks_object )
             print(response)
             # reset uri list for new 100 queue
             uri_list = []
