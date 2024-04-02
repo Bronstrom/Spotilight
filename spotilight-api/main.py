@@ -36,8 +36,8 @@ app.register_blueprint(playlist_bp, url_prefix="/playlist")
 from playlists import playlists_bp
 app.register_blueprint(playlists_bp, url_prefix="/playlists")
 
-from spotlight import spotlight_bp
-app.register_blueprint(spotlight_bp, url_prefix="/spotlight")
+from showcase import showcase_bp
+app.register_blueprint(showcase_bp, url_prefix="/showcase")
 
 # Initialize Flask app
 if __name__ == "__main__":

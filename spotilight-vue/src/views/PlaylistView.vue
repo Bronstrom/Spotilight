@@ -1,5 +1,5 @@
 <template>
-  <div class="playlist main-content-gutter">
+  <div class="playlist">
     <ListUserPlaylistDetails v-bind:playlistID="$route.params.id" />
   </div>
 </template>

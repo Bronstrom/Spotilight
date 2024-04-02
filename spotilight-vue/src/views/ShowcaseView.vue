@@ -1,16 +1,17 @@
 <template>
-  <div class="spotlight" style="max-height: 100vh; overflow: hidden">
+  <div class="showcase main-content-gutter">
+    <h1 class="text-align-center">Showcase</h1>
     <div class="row">
       <div class="col col-lg-8">
         <div class="row">
-          <TopTracks style="background-color: gray" />
+          <TopTracks />
         </div>
         <div class="row">
-          <TopArtists style="background-color: white" />
+          <TopArtists />
         </div>
       </div>
       <div class="col col-lg-4">
-        <TopGenres style="background-color: gray" />
+        <TopGenres />
       </div>
     </div>
   </div>
@@ -22,7 +23,7 @@ import TopArtists from "../components/TopArtists.vue";
 import TopGenres from "../components/TopGenres.vue";
 
 export default {
-  name: "SpotlightView",
+  name: "ShowcaseView",
   components: {
     TopTracks,
     TopArtists,

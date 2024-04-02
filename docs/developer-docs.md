@@ -59,6 +59,22 @@ Create the following `.env` file within `spotilight-vue`:
 BACK_END_URL=http://localhost:5000/
 ```
 
+
+
+
+
+
+
+
+TODO: DETERMINE IF SECRET_KEY is required for the local session to work properly.
+
+
+
+
+
+
+
+
 ### Flask Back-end
 
 #### Running the back-end the first time

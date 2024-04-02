@@ -1,8 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import HomeView from "@/views/HomeView.vue";
-import SpotlightView from "@/views/SpotlightView.vue";
-import Login from "@/components/Login.vue";
-import Profile from "@/components/Profile.vue";
+import ShowcaseView from "@/views/ShowcaseView.vue";
+import PageNotFound from "@/components/PageNotFound.vue";
 import PlaylistsView from "@/views/PlaylistsView.vue";
 import PlaylistView from "@/views/PlaylistView.vue";
 
@@ -23,9 +22,9 @@ const routes = [
     component: PlaylistView,
   },
   {
-    path: "/spotlight",
-    name: "spotlight",
-    component: SpotlightView,
+    path: "/showcase",
+    name: "showcase",
+    component: ShowcaseView,
   },
   {
     path: "/about",
@@ -37,14 +36,9 @@ const routes = [
       import(/* webpackChunkName: "about" */ "@/views/AboutView.vue"),
   },
   {
-    path: "/login",
-    name: "LoginPage",
-    component: Login,
-  },
-  {
-    path: "/user-profile",
-    name: "ProfilePage",
-    component: Profile,
+    path: "/:pathMatch(.*)*",
+    name: "PageNotFound",
+    component: <PageNotFound />,
   },
 ];
 

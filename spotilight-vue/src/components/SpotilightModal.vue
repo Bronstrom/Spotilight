@@ -46,21 +46,22 @@
             <p>{{ body }}</p>
             <p v-if="link">{{ linkInfo }}</p>
             <a v-if="link" :href="link" target="_blank">{{ linkLabel }}</a>
-          </div>
-          <div v-if="inputLabel" class="px-5 pb-3 input-group">
-            <label class="sr-only" for="modal-input">{{ inputLabel }}</label>
-            <div class="input-group">
-              <div class="input-group-prepend">
-                <div class="input-group-text">Name</div>
+
+            <div v-if="inputLabel" class="px-5 pb-3 input-group">
+              <label class="sr-only" for="modal-input">{{ inputLabel }}</label>
+              <div class="input-group">
+                <div class="input-group-prepend">
+                  <div class="input-group-text">Name</div>
+                </div>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="modal-input"
+                  :placeholder="inputPlaceholder"
+                  :value="inputText"
+                  @input="(event) => (inputText = event.target.value)"
+                />
               </div>
-              <input
-                type="text"
-                class="form-control"
-                id="modal-input"
-                :placeholder="inputPlaceholder"
-                :value="inputText"
-                @input="(event) => (inputText = event.target.value)"
-              />
             </div>
           </div>
           <div class="modal-footer">
@@ -126,4 +127,17 @@ export default {
 };
 </script>
 
-<!-- TODO: Add validation for the field having input -->
+<style>
+.modal-backdrop.fade.show {
+  z-index: inherit;
+}
+.modal-header,
+.modal-body,
+.modal-footer {
+  background-color: #777777;
+}
+.modal-content {
+  margin: 2px auto;
+  z-index: 2;
+}
+</style>

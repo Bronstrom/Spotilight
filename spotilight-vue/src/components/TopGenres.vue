@@ -346,7 +346,7 @@ export default {
       };
     },
     async handleUserTopArtistGenres(spotifyGenreList) {
-      const medium_term_artist_endpoint = `/spotlight/top-artists/medium_term/0/${TOP_COUNT}`;
+      const medium_term_artist_endpoint = `/showcase/top-artists/medium_term/0/${TOP_COUNT}`;
       await axios
         .get(medium_term_artist_endpoint)
         .then((res) => {
@@ -375,7 +375,7 @@ export default {
             this.chartloaded = true;
           }
           for (offset; offset < total; offset = offset + limit) {
-            let artist_endpoint = `/spotlight/top-artists/medium_term/${offset}/${TOP_COUNT}`;
+            let artist_endpoint = `/showcase/top-artists/medium_term/${offset}/${TOP_COUNT}`;
             axios
               .get(artist_endpoint)
               .then((res) => {
@@ -408,7 +408,7 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      const short_term_artist_endpoint = `/spotlight/top-artists/short_term/0/${TOP_COUNT}`;
+      const short_term_artist_endpoint = `/showcase/top-artists/short_term/0/${TOP_COUNT}`;
       await axios
         .get(short_term_artist_endpoint)
         .then((res) => {
@@ -432,7 +432,7 @@ export default {
             this.spotifyCategoryGenreCountShort = spotifyCountShort;
           }
           for (offset; offset < total; offset = offset + limit) {
-            let artist_endpoint = `/spotlight/top-artists/short_term/${offset}/${TOP_COUNT}`;
+            let artist_endpoint = `/showcase/top-artists/short_term/${offset}/${TOP_COUNT}`;
             axios
               .get(artist_endpoint)
               .then((res) => {
@@ -461,7 +461,7 @@ export default {
         .catch((err) => {
           console.error(err);
         });
-      const long_term_artist_endpoint = `/spotlight/top-artists/long_term/0/${TOP_COUNT}`;
+      const long_term_artist_endpoint = `/showcase/top-artists/long_term/0/${TOP_COUNT}`;
       await axios
         .get(long_term_artist_endpoint)
         .then((res) => {
@@ -485,7 +485,7 @@ export default {
             this.spotifyCategoryGenreCountLong = spotifyCountLong;
           }
           for (offset; offset < total; offset = offset + limit) {
-            let artist_endpoint = `/spotlight/top-artists/long_term/${offset}/${TOP_COUNT}`;
+            let artist_endpoint = `/showcase/top-artists/long_term/${offset}/${TOP_COUNT}`;
             axios
               .get(artist_endpoint)
               .then((res) => {

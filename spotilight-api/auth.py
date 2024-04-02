@@ -99,7 +99,7 @@ def callback():
         response = requests.post(TOKEN_ENDPOINT, data=req_body)
         token = response.json()
         set_session_token(token)
-        response = redirect(FRONT_END_URL + "/user-profile")
+        response = redirect(FRONT_END_URL + "/")
         return response
 
 # "/refresh-token" endpoint: Creates a new token if current token expired

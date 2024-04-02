@@ -162,9 +162,9 @@ When selecting one or more tracks, you have the option to delete the items you h
 
 This option appears when you have selected one or more tracks. All the items within the playlist you have selected will be added to a new playlist. When selecting this option, a modal will appear with a required text field for the name of the new playlist.
 
-## Spotlight/Stats
+## Showcase/Stats
 
-View statistics and information about your listening history by going to the "Spotlight" tab.
+View statistics and information about your listening history by going to the "Showcase" tab.
 
 ### Top Tracks
 

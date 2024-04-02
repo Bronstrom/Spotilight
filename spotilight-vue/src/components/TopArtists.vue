@@ -1,72 +1,77 @@
 <template>
   <div class="top-artists">
     <h3>Top Artists</h3>
-    <div class="dropdown time-range">
-      <button
-        class="btn btn-primary-accent-1 dropdown-toggle"
-        type="button"
-        id="top-artist-frequency-button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        {{ timeRange }}
-      </button>
-      <div class="dropdown-menu" aria-labelledby="top-artist-frequency-button">
-        <a
-          class="dropdown-item"
-          @click="(timeRange = 'Short Term'), changeTimeRange('short_term')"
-          >Short Term (Past 4 Weeks)</a
+    <div class="row">
+      <div class="col dropdown time-range">
+        <button
+          class="btn btn-primary dropdown-toggle"
+          type="button"
+          id="top-artist-frequency-button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
         >
-        <a
-          class="dropdown-item"
-          @click="(timeRange = 'Medium Term'), changeTimeRange('medium_term')"
-          >Medium Term (Past 6 Months)</a
+          {{ timeRange }}
+        </button>
+        <div
+          class="dropdown-menu"
+          aria-labelledby="top-artist-frequency-button"
         >
-        <a
-          class="dropdown-item"
-          @click="(timeRange = 'Long Term'), changeTimeRange('long_term')"
-          >Long Term (Past Few Years)</a
-        >
+          <a
+            class="dropdown-item"
+            @click="(timeRange = 'Short Term'), changeTimeRange('short_term')"
+            >Short Term (Past 4 Weeks)</a
+          >
+          <a
+            class="dropdown-item"
+            @click="(timeRange = 'Medium Term'), changeTimeRange('medium_term')"
+            >Medium Term (Past 6 Months)</a
+          >
+          <a
+            class="dropdown-item"
+            @click="(timeRange = 'Long Term'), changeTimeRange('long_term')"
+            >Long Term (Past Few Years)</a
+          >
+        </div>
       </div>
-    </div>
-    <div class="dropdown limit">
-      <button
-        class="btn btn-primary dropdown-toggle"
-        type="button"
-        id="top-genre-limit-button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Show Top {{ limit }}
-      </button>
-      <div class="dropdown-menu" aria-labelledby="top-genre-limit-button">
-        <a class="dropdown-item" @click="limit = 3">Show Top 3</a>
-        <a class="dropdown-item" @click="limit = 5">Show Top 5</a>
-        <a class="dropdown-item" @click="limit = 10">Show Top 10</a>
-        <a class="dropdown-item" @click="limit = 25">Show Top 25</a>
+      <div class="col dropdown limit">
+        <button
+          class="btn btn-primary dropdown-toggle"
+          type="button"
+          id="top-genre-limit-button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Show Top {{ limit }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="top-genre-limit-button">
+          <a class="dropdown-item" @click="limit = 3">Show Top 3</a>
+          <a class="dropdown-item" @click="limit = 5">Show Top 5</a>
+          <a class="dropdown-item" @click="limit = 10">Show Top 10</a>
+          <a class="dropdown-item" @click="limit = 25">Show Top 25</a>
+        </div>
       </div>
-    </div>
-    <div class="artist create-playlist-from-list">
-      <button
-        class="btn btn-primary create-from-list"
-        data-bs-toggle="modal"
-        data-bs-target="#create-playlist-item-modal-artist"
-      >
-        + Create Playlist
-      </button>
-      <SpotilightModal
-        title="Create playlist"
-        id="create-playlist-item-modal-artist"
-        :body="
-          'Enter a name below for a playlist with the top five tracks for your top ' +
-          limit +
-          ' artists and select Create Playlist.'
-        "
-        :actionLabel="'Create playlist'"
-        :inputLabel="'Playlist name'"
-        :inputPlaceholder="'Playlist name'"
-        @action="(name) => createPlaylist(name, 5)"
-      />
+      <div class="col artist create-playlist-from-list">
+        <button
+          class="btn btn-primary create-from-list"
+          data-bs-toggle="modal"
+          data-bs-target="#create-playlist-item-modal-artist"
+        >
+          + Create Playlist
+        </button>
+        <SpotilightModal
+          title="Create playlist"
+          id="create-playlist-item-modal-artist"
+          :body="
+            'Enter a name below for a playlist with the top five tracks for your top ' +
+            limit +
+            ' artists and select Create Playlist.'
+          "
+          :actionLabel="'Create playlist'"
+          :inputLabel="'Playlist name'"
+          :inputPlaceholder="'Playlist name'"
+          @action="(name) => createPlaylist(name, 5)"
+        />
+      </div>
     </div>
     <div
       class="artist row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
@@ -76,14 +81,14 @@
         v-for="artist in limitedTopArtists()"
         v-bind:key="artist.id"
       >
-        <div class="artist card h-100">
+        <div class="artist card" style="height: 30rem; overflow: auto">
           <!--{{ console.log(artist) }}-->
           <img
             class="artist card-image"
             :src="artist.images[0].url"
             :alt="artist.name + ' album cover'"
           />
-          <div class="artist card-body">
+          <div class="artist card-body" style="height: 10rem; overflow: auto">
             <h5 class="artist card-title">{{ artist.name }}</h5>
             <h6 class="artist card-album">Type: {{ artist.type }}</h6>
             <p>
@@ -147,7 +152,7 @@ export default {
     handleTopArtists() {
       // TODO: Refactor some of this duplication
       const medium_term_artist_endpoint =
-        "/spotlight/top-artists/medium_term/0/" + MAX_LIMIT_COUNT;
+        "/showcase/top-artists/medium_term/0/" + MAX_LIMIT_COUNT;
       axios
         .get(medium_term_artist_endpoint)
         .then((res) => {
@@ -159,7 +164,7 @@ export default {
         });
 
       const short_term_artist_endpoint =
-        "/spotlight/top-artists/short_term/0/" + MAX_LIMIT_COUNT;
+        "/showcase/top-artists/short_term/0/" + MAX_LIMIT_COUNT;
       axios
         .get(short_term_artist_endpoint)
         .then((res) => {
@@ -170,7 +175,7 @@ export default {
         });
 
       const long_term_artist_endpoint =
-        "/spotlight/top-artists/long_term/0/" + MAX_LIMIT_COUNT;
+        "/showcase/top-artists/long_term/0/" + MAX_LIMIT_COUNT;
       axios
         .get(long_term_artist_endpoint)
         .then((res) => {
@@ -230,7 +235,7 @@ export default {
       let trackList = [];
 
       this.limitedTopArtists().forEach((artist) => {
-        const artist_top_track_endpoint = `/spotlight/${artist.id}/top-tracks`;
+        const artist_top_track_endpoint = `/showcase/${artist.id}/top-tracks`;
 
         axios
           .get(artist_top_track_endpoint)

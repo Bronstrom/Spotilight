@@ -1,57 +1,66 @@
 <template>
   <div class="playlist">
-    <button type="button" class="btn btn-primary" @click="goToPlaylistsList">
-      Return to Playlists List
-    </button>
-    <div v-if="!playlist.name">
-      <h3>Loading Playlist . . .</h3>
-    </div>
-    <div v-else class="playlist">
-      {{ console.log(playlist) }}
-      <h3>{{ playlist.name }}</h3>
-      <img
-        v-if="playlist.images?.length > 0"
-        class="playlist card-image"
-        :src="playlist.images[0]?.url"
-        :alt="playlist.name + ' playlist art'"
-      />
-      <p v-else class="playlist not-specified">No Playlist Image Provided</p>
-      <div class="playlist card-body">
-        <p class="playlist card-album">
-          Owner: {{ playlist.owner?.display_name }}
-        </p>
-        <p class="playlist card-album">
-          Visibility: {{ playlist.public ? "Public" : "Private" }}
-        </p>
-        <p class="playlist card-album">
-          Follower Count:
-          {{
-            playlist.public
-              ? playlist.followers.total
-              : "* Not a public playlist *"
-          }}
-        </p>
-        <p class="playlist card-album">
-          Collaboration:
-          {{ playlist.collaborative ? "Allowed" : "Not allowed" }}
-        </p>
-        <p class="playlist card-album">
-          Description: {{ playlist.description || "* None *" }}
-        </p>
-        <p class="playlist card-album">
-          Track Count: {{ playlist.tracks.total }}
-        </p>
+    <div class="playlist-details main-content-gutter">
+      <button
+        type="button"
+        class="btn btn-primary margin-top-bottom"
+        @click="goToPlaylistsList"
+      >
+        Return to Playlists List
+      </button>
+      <div v-if="!playlist.name">
+        <h3>Loading Playlist . . .</h3>
+      </div>
+      <div v-else class="playlist margin-top-bottom">
+        <div class="container">
+          <div class="row">
+            <div class="playlist col-12 col-md-6">
+              <img
+                v-if="playlist.images?.length > 0"
+                class="playlist image"
+                :src="playlist.images[0]?.url"
+                :alt="playlist.name + ' playlist art'"
+                width="100%"
+              />
+              <p v-else class="playlist not-specified">
+                No Playlist Image Provided
+              </p>
+            </div>
+            <div class="playlist text-align-left col">
+              <h3>{{ playlist.name }}</h3>
+              <p class="playlist">
+                Description: {{ playlist.description || "* None *" }}
+              </p>
+              <p>Owner: {{ playlist.owner?.display_name }}</p>
+              <p>Visibility: {{ playlist.public ? "Public" : "Private" }}</p>
+              <p>
+                Follower Count:
+                {{
+                  playlist.public
+                    ? playlist.followers.total
+                    : "* Not a public playlist *"
+                }}
+              </p>
+              <p class="playlist">
+                Collaboration:
+                {{ playlist.collaborative ? "Allowed" : "Not allowed" }}
+              </p>
+              <p class="playlist">Track Count: {{ playlist.tracks.total }}</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div>
-      <p4>Track List</p4>
       <div v-if="originalTrackList.length < 1" class="track not-specified">
         No tracks in this playlist
       </div>
       <div v-else>
         <ListPlaylistItems
           playlistItemType="track"
+          :playlistItemTitle="playlist.name + ': Track List'"
           :originalPlaylistItems="originalTrackList"
+          :loadedItemList="loadedItemList"
           :itemId="playlistID"
           @deleted="aquirePlaylist"
         />
@@ -75,6 +84,7 @@ export default {
   data() {
     return {
       originalTrackList: [],
+      loadedItemList: false,
       playlist: [],
     };
   },
@@ -107,6 +117,7 @@ export default {
                   ...this.originalTrackList,
                   ...res.data?.items,
                 ];
+                this.loadedItemList = true;
               })
               .catch((err) => {
                 console.error(err);
