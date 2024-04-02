@@ -98,11 +98,6 @@ export default {
         .get(path)
         .then((res) => {
           this.profileIcon = res.data;
-          if (res.data !== "") {
-            this.$emit("loggedIn");
-          } else {
-            this.$emit("loggedOut");
-          }
         })
         .catch((err) => {
           console.error(err);

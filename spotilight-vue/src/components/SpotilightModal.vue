@@ -4,13 +4,13 @@
     :id="id"
     tabindex="-1"
     role="dialog"
-    aria-labelledby="spotlightModalCenter"
+    aria-labelledby="spotilightModalCenter"
     aria-hidden="true"
   >
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="spotlightModalTitle">{{ title }}</h5>
+          <h5 class="modal-title" id="spotilightModalTitle">{{ title }}</h5>
           <button
             type="button"
             class="close"

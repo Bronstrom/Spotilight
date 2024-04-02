@@ -1,16 +1,16 @@
 <template>
-  <div class="showcase main-content-gutter">
+  <div class="showcase main-content-gutter margin-top-bottom">
     <h1 class="text-align-center">Showcase</h1>
     <div class="row">
       <div class="col col-lg-8">
-        <div class="row">
+        <div class="row p-3">
           <TopTracks />
         </div>
-        <div class="row">
+        <div class="row p-3">
           <TopArtists />
         </div>
       </div>
-      <div class="col col-lg-4">
+      <div class="col col-lg-4 p-3">
         <TopGenres />
       </div>
     </div>
