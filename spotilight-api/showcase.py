@@ -3,13 +3,13 @@ from datetime import datetime
 import requests
 
 # Define "auth" blueprint
-spotlight_bp = Blueprint("spotlight", __name__)
+showcase_bp = Blueprint("showcase", __name__)
 
 # Define Spotify base endpoint
 API_BASE_ENDPOINT = "https://api.spotify.com/v1/"
 
 # "/top-tracks" endpoint: Get a users top tracks they've listened to for a time range and specified count
-@spotlight_bp.route("/top-tracks/<time_range>/<count>", methods=["GET"])
+@showcase_bp.route("/top-tracks/<time_range>/<count>", methods=["GET"])
 def get_top_tracks(time_range, count):
     # User will need to be logged in to aquire profile data - attempt sign in again
     if "access_token" not in session:
@@ -26,7 +26,7 @@ def get_top_tracks(time_range, count):
     return jsonify(top_tracks)
 
 # "/top-artists" endpoint: Get a users top artists they've listened to for a time range, offset, and specified count
-@spotlight_bp.route("/top-artists/<time_range>/<offset>/<count>", methods=["GET"])
+@showcase_bp.route("/top-artists/<time_range>/<offset>/<count>", methods=["GET"])
 def get_top_artists(time_range, offset, count):
     # User will need to be logged in to aquire profile data - attempt sign in again
     if "access_token" not in session:
@@ -43,7 +43,7 @@ def get_top_artists(time_range, offset, count):
     return jsonify(top_artists)
 
 # artist top tracks endpoint: Get an artist's top tracks
-@spotlight_bp.route("/<artist_id>/top-tracks", methods=["GET"])
+@showcase_bp.route("/<artist_id>/top-tracks", methods=["GET"])
 def get_artist_top_tracks(artist_id):
     # User will need to be logged in to aquire profile data - attempt sign in again
     if "access_token" not in session:

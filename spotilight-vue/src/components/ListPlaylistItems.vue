@@ -1,139 +1,204 @@
 <template>
+  <div class="playlist-item-options item-sticky-top">
+    <div class="row main-content-gutter" style="width: 100%">
+      <div class="col-4 align-content-center-v-and-h">
+        <button
+          type="button"
+          @click="selectionMode = !selectionMode"
+          :class="['btn', selectionMode ? 'btn-warning' : 'btn-secondary']"
+        >
+          Selection Mode
+        </button>
+        <div v-if="isTypeTrack() && selectionMode" class="selected-items">
+          <button type="button" class="btn btn-primary" @click="selectAllItems">
+            Select All Items
+          </button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            @click="clearSelectedItems"
+          >
+            Unselect All Items
+          </button>
+        </div>
+        <div v-if="selectedItems?.length > 0" class="selected-item-options">
+          <button
+            class="btn btn-primary delete-selected-item"
+            data-bs-toggle="modal"
+            data-bs-target="#delete-playlist-item-modal"
+          >
+            Delete Selected Items
+          </button>
+        </div>
+        <div
+          v-if="isTypePlaylist() && selectedItems?.length > 0"
+          class="selected-item-options"
+        >
+          <button
+            v-if="selectedItems?.length === 1"
+            class="btn btn-primary duplicate-selected-item"
+            data-bs-toggle="modal"
+            data-bs-target="#duplicate-playlist-item-modal"
+          >
+            Duplicate Playlist
+          </button>
+          <button
+            v-if="selectedItems?.length > 1"
+            class="btn btn-primary merge-selected-item"
+            data-bs-toggle="modal"
+            data-bs-target="#merge-playlist-item-modal"
+            @click="resetActionCompletionFlow"
+          >
+            Merge Selected Items
+          </button>
+        </div>
+        <div
+          v-if="isTypeTrack() && selectedItems?.length > 0"
+          class="selected-item-options"
+        >
+          <button
+            v-if="selectedItems?.length > 0"
+            class="btn btn-primary create-playlist-from-selected-items"
+            data-bs-toggle="modal"
+            data-bs-target="#create-playlist-item-modal"
+          >
+            Create Playlist from Selected Items
+          </button>
+        </div>
+      </div>
+      <div class="col-4 align-content-center-v-and-h">
+        <h3>
+          {{ playlistItemTitle }}
+        </h3>
+      </div>
+      <div class="col-4 row">
+        <div class="sort-playlists col">
+          <p>Sort by:</p>
+          <button
+            class="btn btn-primary dropdown-toggle"
+            type="button"
+            id="sort-playlists-dropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ sortLabel }}
+          </button>
+          <div class="dropdown-menu" aria-labelledby="sort-playlists-dropdown">
+            <a v-if="isTypeTrack()" class="dropdown-item" @click="sortUnsorted"
+              >Unsorted (User organized)</a
+            >
+            <a class="dropdown-item" @click="sortNewestFirst">Newest First</a>
+            <a class="dropdown-item" @click="sortOldestFirst">Oldest First</a>
+            <a class="dropdown-item" @click="sortAlphAsc">Title Ascending</a>
+            <a class="dropdown-item" @click="sortAlphDesc">Title Descending</a>
+            <template v-if="isTypePlaylist()">
+              <a class="dropdown-item" @click="sortByOwner">Owner</a>
+              <a class="dropdown-item" @click="sortByTotalTracks"
+                >Total Tracks</a
+              >
+            </template>
+            <template v-if="isTypeTrack()">
+              <a class="dropdown-item" @click="sortByArtist">Lead Artist</a>
+            </template>
+          </div>
+        </div>
+        <div class="filter-playlists col">
+          <p>Filter by:</p>
+          <button
+            class="btn btn-primary dropdown-toggle"
+            type="button"
+            id="filter-playlists-dropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            {{ filterLabel }}
+          </button>
+          <div
+            class="dropdown-menu"
+            aria-labelledby="filter-playlists-dropdown"
+          >
+            <a
+              class="dropdown-item"
+              @click="(filterLabel = 'No Filter'), (filterType = 'none')"
+              >No Filter</a
+            >
+            <template v-if="isTypePlaylist()">
+              <a
+                class="dropdown-item"
+                @click="
+                  (filterLabel = 'Public Playlists Only'),
+                    (filterType = 'public')
+                "
+                >Public Playlists Only</a
+              >
+              <a
+                class="dropdown-item"
+                @click="
+                  (filterLabel = 'Private Playlists Only'),
+                    (filterType = 'private')
+                "
+                >Private Playlists Only</a
+              >
+            </template>
+            <template v-if="isTypeTrack()">
+              <a
+                class="dropdown-item"
+                @click="
+                  (filterLabel = 'No Local Files Only'),
+                    (filterType = 'no-local')
+                "
+                >No Local Files Only</a
+              >
+              <a
+                class="dropdown-item"
+                @click="
+                  (filterLabel = 'Local Files Only'), (filterType = 'local')
+                "
+                >Local Files Only</a
+              >
+              <a
+                class="dropdown-item"
+                @click="
+                  (filterLabel = 'No Explicits Only'),
+                    (filterType = 'no-explicit')
+                "
+                >No Explicits Only</a
+              >
+              <a
+                class="dropdown-item"
+                @click="
+                  (filterLabel = 'Explicits Only'), (filterType = 'explicit')
+                "
+                >Explicits Only</a
+              >
+            </template>
+          </div>
+        </div>
+        <div class="toggle grid list col">
+          <input
+            v-on:change="viewType = 'grid'"
+            type="radio"
+            class="btn-check"
+            name="view-options"
+            id="grid-selection"
+            autocomplete="off"
+            checked
+          />
+          <label class="btn btn-outline-dark" for="grid-selection">Grid</label>
+          <input
+            v-on:change="viewType = 'list'"
+            type="radio"
+            class="btn-check"
+            name="view-options"
+            id="list-selection"
+            autocomplete="off"
+          />
+          <label class="btn btn-outline-dark" for="list-selection">List</label>
+        </div>
+      </div>
+    </div>
+  </div>
   <div>
-    <button
-      type="button"
-      @click="selectionMode = !selectionMode"
-      :class="['btn', selectionMode ? 'btn-warning' : 'btn-secondary']"
-    >
-      Selection Mode
-    </button>
-  </div>
-  <div class="sort-playlists m-2">
-    <p>Sort</p>
-    <button
-      class="btn btn-primary dropdown-toggle"
-      type="button"
-      id="sort-playlists-dropdown"
-      data-bs-toggle="dropdown"
-      aria-expanded="false"
-    >
-      {{ sortLabel }}
-    </button>
-    <div class="dropdown-menu" aria-labelledby="sort-playlists-dropdown">
-      <a v-if="isTypeTrack()" class="dropdown-item" @click="sortUnsorted"
-        >Unsorted (User organized)</a
-      >
-      <a class="dropdown-item" @click="sortNewestFirst">Newest First</a>
-      <a class="dropdown-item" @click="sortOldestFirst">Oldest First</a>
-      <a class="dropdown-item" @click="sortAlphAsc">Title Ascending</a>
-      <a class="dropdown-item" @click="sortAlphDesc">Title Descending</a>
-      <template v-if="isTypePlaylist()">
-        <a class="dropdown-item" @click="sortByOwner">Owner</a>
-        <a class="dropdown-item" @click="sortByTotalTracks">Total Tracks</a>
-      </template>
-      <template v-if="isTypeTrack()">
-        <a class="dropdown-item" @click="sortByArtist">Lead Artist</a>
-      </template>
-    </div>
-  </div>
-  <div class="filter-playlists m-2">
-    <p>Filter</p>
-    <button
-      class="btn btn-primary dropdown-toggle"
-      type="button"
-      id="filter-playlists-dropdown"
-      data-bs-toggle="dropdown"
-      aria-expanded="false"
-    >
-      {{ filterLabel }}
-    </button>
-    <div class="dropdown-menu" aria-labelledby="filter-playlists-dropdown">
-      <a
-        class="dropdown-item"
-        @click="(filterLabel = 'No Filter'), (filterType = 'none')"
-        >No Filter</a
-      >
-      <template v-if="isTypePlaylist()">
-        <a
-          class="dropdown-item"
-          @click="
-            (filterLabel = 'Public Playlists Only'), (filterType = 'public')
-          "
-          >Public Playlists Only</a
-        >
-        <a
-          class="dropdown-item"
-          @click="
-            (filterLabel = 'Private Playlists Only'), (filterType = 'private')
-          "
-          >Private Playlists Only</a
-        >
-      </template>
-      <template v-if="isTypeTrack()">
-        <a
-          class="dropdown-item"
-          @click="
-            (filterLabel = 'No Local Files Only'), (filterType = 'no-local')
-          "
-          >No Local Files Only</a
-        >
-        <a
-          class="dropdown-item"
-          @click="(filterLabel = 'Local Files Only'), (filterType = 'local')"
-          >Local Files Only</a
-        >
-        <a
-          class="dropdown-item"
-          @click="
-            (filterLabel = 'No Explicits Only'), (filterType = 'no-explicit')
-          "
-          >No Explicits Only</a
-        >
-        <a
-          class="dropdown-item"
-          @click="(filterLabel = 'Explicits Only'), (filterType = 'explicit')"
-          >Explicits Only</a
-        >
-      </template>
-    </div>
-  </div>
-  <div class="toggle grid list">
-    <input
-      v-on:change="viewType = 'grid'"
-      type="radio"
-      class="btn-check"
-      name="view-options"
-      id="grid-selection"
-      autocomplete="off"
-      checked
-    />
-    <label class="btn btn-outline-success" for="grid-selection">Grid</label>
-    <input
-      v-on:change="viewType = 'list'"
-      type="radio"
-      class="btn-check"
-      name="view-options"
-      id="list-selection"
-      autocomplete="off"
-    />
-    <label class="btn btn-outline-danger" for="list-selection">List</label>
-  </div>
-  <div v-if="isTypeTrack() && selectionMode" class="selected-items">
-    <button type="button" class="btn btn-primary" @click="selectAllItems">
-      Select All Items
-    </button>
-    <button type="button" class="btn btn-primary" @click="clearSelectedItems">
-      Unselect All Items
-    </button>
-  </div>
-  <div v-if="selectedItems?.length > 0" class="selected-item-options">
-    <button
-      class="btn btn-primary delete-selected-item"
-      data-bs-toggle="modal"
-      data-bs-target="#delete-playlist-item-modal"
-    >
-      Delete Selected Items
-    </button>
     <SpotilightModal
       :actionCompletionFlow="null"
       :title="'Delete ' + playlistItemType + '(s)'"
@@ -155,19 +220,6 @@
       :actionLabel="'Delete ' + playlistItemType + '(s)'"
       @action="deleteItems"
     />
-  </div>
-  <div
-    v-if="isTypePlaylist() && selectedItems?.length > 0"
-    class="selected-item-options"
-  >
-    <button
-      v-if="selectedItems?.length === 1"
-      class="btn btn-primary duplicate-selected-item"
-      data-bs-toggle="modal"
-      data-bs-target="#duplicate-playlist-item-modal"
-    >
-      Duplicate Playlist
-    </button>
     <SpotilightModal
       :actionCompletionFlow="null"
       :title="'Duplicate ' + playlistItemType"
@@ -182,15 +234,6 @@
       :inputPlaceholder="'Playlist name'"
       @action="(name) => createPlaylistFromPlaylistID(name)"
     />
-    <button
-      v-if="selectedItems?.length > 1"
-      class="btn btn-primary merge-selected-item"
-      data-bs-toggle="modal"
-      data-bs-target="#merge-playlist-item-modal"
-      @click="resetActionCompletionFlow"
-    >
-      Merge Selected Items
-    </button>
     <SpotilightModal
       :actionCompletionFlow="actionCompletionFlow"
       :title="'Merge ' + playlistItemType + 's'"
@@ -212,19 +255,6 @@
         }
       "
     />
-  </div>
-  <div
-    v-if="isTypeTrack() && selectedItems?.length > 0"
-    class="selected-item-options"
-  >
-    <button
-      v-if="selectedItems?.length > 0"
-      class="btn btn-primary create-playlist-from-selected-items"
-      data-bs-toggle="modal"
-      data-bs-target="#create-playlist-item-modal"
-    >
-      Create Playlist from Selected Items
-    </button>
     <SpotilightModal
       :actionCompletionFlow="null"
       :title="'Create ' + playlistItemType"
@@ -243,59 +273,40 @@
     />
   </div>
   <!-- Render grid view -->
-  <div
-    v-if="viewType === 'grid'"
-    class="playlist row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
-  >
+  <div class="main-content-gutter margin-top-bottom">
     <div
-      v-for="playlistItem in filterList(sortedPlaylistItems)"
-      class="playlist col"
-      v-bind:key="getPlaylistItemId(playlistItem)"
-      :id="getPlaylistItemId(playlistItem) + '_item'"
-      @click="
-        !selectionMode
-          ? isTypePlaylist() &&
-            goToPlaylistPage(getPlaylistItemId(playlistItem))
-          : handleSelection(getPlaylistItemId(playlistItem))
-      "
+      v-if="viewType === 'grid'"
+      class="playlist row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 justify-content-center"
     >
-      <!--{{ console.log(playlist) }}-->
+      <template v-if="!sortedPlaylistItems && !loadedItemList">
+        <div
+          v-for="index in 3"
+          class="playlist col"
+          v-bind:key="index + '_placeholder_item'"
+          :id="index + '_placeholder_item'"
+        >
+          <div class="playlist card h-100">
+            <div
+              class="card-img-top placeholder-wave p-5"
+              style="background-color: gray"
+            ></div>
+            <div class="card-body">
+              <h5 class="card-title placeholder-wave">
+                <span class="placeholder col-6"></span>
+              </h5>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+                <span class="placeholder col-4"></span>
+              </p>
+              <a href="#" class="btn btn-primary disabled"></a>
+            </div>
+          </div>
+        </div>
+      </template>
       <div
-        class="playlist card h-100"
-        :style="{
-          'background-color': selectedItems.includes(
-            getPlaylistItemId(playlistItem)
-          )
-            ? 'orange'
-            : 'white',
-        }"
-      >
-        <component :is="playlistItemComponent" :playlistItem="playlistItem" />
-      </div>
-    </div>
-  </div>
-  <!-- Render list view -->
-  <table v-else class="table table-striped">
-    <thead class="thead-dark">
-      <tr>
-        <th>Image</th>
-        <th>Title</th>
-        <th v-if="isTypePlaylist()">Owner</th>
-        <th v-if="isTypePlaylist()">Visibility</th>
-        <th v-if="isTypePlaylist()">Description</th>
-        <th v-if="isTypePlaylist()">Track Count</th>
-        <th v-if="isTypeTrack()">Added At</th>
-        <th v-if="isTypeTrack()">Local</th>
-        <th v-if="isTypeTrack()">Explicit</th>
-        <th v-if="isTypeTrack()">Album/Single</th>
-        <th v-if="isTypeTrack()">Duration</th>
-        <th v-if="isTypeTrack()">Artist</th>
-        <th>Link</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr
+        v-else
         v-for="playlistItem in filterList(sortedPlaylistItems)"
+        class="playlist col"
         v-bind:key="getPlaylistItemId(playlistItem)"
         :id="getPlaylistItemId(playlistItem) + '_item'"
         @click="
@@ -305,18 +316,110 @@
             : handleSelection(getPlaylistItemId(playlistItem))
         "
       >
-        <component
-          :is="playlistItemComponent"
-          :playlistItem="playlistItem"
-          :color="
-            selectedItems.includes(getPlaylistItemId(playlistItem))
+        <!--{{ console.log(playlist) }}-->
+        <div
+          class="playlist card h-100"
+          :style="{
+            'background-color': selectedItems.includes(
+              getPlaylistItemId(playlistItem)
+            )
               ? 'orange'
-              : 'white'
+              : 'white',
+          }"
+        >
+          <component :is="playlistItemComponent" :playlistItem="playlistItem" />
+        </div>
+      </div>
+    </div>
+    <!-- Render list view -->
+    <table v-else class="table table-striped">
+      <thead class="thead-dark item-sticky-top-sub">
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th v-if="isTypePlaylist()">Owner</th>
+          <th v-if="isTypePlaylist()">Visibility</th>
+          <th v-if="isTypePlaylist()">Description</th>
+          <th v-if="isTypePlaylist()">Track Count</th>
+          <th v-if="isTypeTrack()">Added At</th>
+          <th v-if="isTypeTrack()">Local</th>
+          <th v-if="isTypeTrack()">Explicit</th>
+          <th v-if="isTypeTrack()">Album/Single</th>
+          <th v-if="isTypeTrack()">Duration</th>
+          <th v-if="isTypeTrack()">Artist</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template v-if="!sortedPlaylistItems && !loadedItemList">
+          <tr
+            v-for="index in 3"
+            class="playlist"
+            v-bind:key="index + '_placeholder_item'"
+            :id="index + '_placeholder_item'"
+          >
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+          </tr>
+        </template>
+        <tr
+          v-else
+          v-for="playlistItem in filterList(sortedPlaylistItems)"
+          v-bind:key="getPlaylistItemId(playlistItem)"
+          :id="getPlaylistItemId(playlistItem) + '_item'"
+          @click="
+            !selectionMode
+              ? isTypePlaylist() &&
+                goToPlaylistPage(getPlaylistItemId(playlistItem))
+              : handleSelection(getPlaylistItemId(playlistItem))
           "
-        />
-      </tr>
-    </tbody>
-  </table>
+        >
+          <component
+            :is="playlistItemComponent"
+            :playlistItem="playlistItem"
+            :color="
+              selectedItems.includes(getPlaylistItemId(playlistItem))
+                ? 'orange'
+                : 'white'
+            "
+          />
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -339,6 +442,8 @@ export default {
   },
   props: {
     playlistItemType: String,
+    playlistItemTitle: String,
+    loadedItemList: Boolean,
     originalPlaylistItems: Object,
     // Single playlist item specific
     itemId: String,
@@ -729,3 +834,16 @@ export default {
   },
 };
 </script>
+
+<style>
+.item-sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #aaaaaa;
+}
+.item-sticky-top-sub {
+  position: sticky;
+  top: 3rem;
+}
+</style>

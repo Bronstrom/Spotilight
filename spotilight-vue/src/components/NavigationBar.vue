@@ -1,3 +1,7 @@
+<script setup>
+import { user } from "../user.js";
+</script>
+
 <template>
   <nav
     class="navbar bg-dark navbar-expand-lg border-bottom border-body"
@@ -5,7 +9,7 @@
   >
     <div class="main-content-gutter space-between">
       <div class="navbar-brand">
-        <a :href="userLoggedIn ? '/user-profile' : '/'">
+        <a href="/">
           <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" height="25" />
           Spotilight</a
         >
@@ -26,11 +30,11 @@
           <li class="nav-item">
             <a class="nav-link" href="/about">About</a>
           </li>
-          <li v-if="userLoggedIn" class="nav-item">
+          <li v-if="user.displayName" class="nav-item">
             <a class="nav-link" href="/playlists">Playlists</a>
           </li>
-          <li v-if="userLoggedIn" class="nav-item">
-            <a class="nav-link" href="/spotlight">Spotlight</a>
+          <li v-if="user.displayName" class="nav-item">
+            <a class="nav-link" href="/showcase">Showcase</a>
           </li>
         </ul>
       </div>
@@ -62,7 +66,7 @@
         <ul class="dropdown-menu">
           <li>
             <a
-              v-if="userLoggedIn"
+              v-if="user.displayName"
               class="dropdown-item"
               @click="handleAccountLogout()"
               >Logout</a
@@ -85,7 +89,6 @@ export default {
   data() {
     return {
       profileIcon: "",
-      userLoggedIn: false,
     };
   },
   methods: {
@@ -95,12 +98,21 @@ export default {
         .get(path)
         .then((res) => {
           this.profileIcon = res.data;
-          // This API call is also used as the basic method to know if a user is signed-in
-          this.userLoggedIn = res.data !== "";
-          if (res.data !== "") {
-            this.$emit("loggedIn");
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    },
+    retrieveAccountDisplayName() {
+      const path = "/user/display-name";
+      axios
+        .get(path)
+        .then((res) => {
+          console.log(res.data);
+          if (!res.data.url) {
+            user.handleNewDisplayName(res?.data);
           } else {
-            this.$emit("loggedOut");
+            user.handleNewDisplayName(null);
           }
         })
         .catch((err) => {
@@ -133,6 +145,7 @@ export default {
   },
   created() {
     this.retrieveAccountProfileIcon();
+    this.retrieveAccountDisplayName();
   },
 };
 </script>

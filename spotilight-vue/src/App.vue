@@ -1,9 +1,5 @@
 <template>
-  <NavigationBar
-    :userLoggedIn="userLoggedIn"
-    :loggedIn="loggedIn"
-    :loggedOut="loggedOut"
-  />
+  <NavigationBar />
   <router-view />
 </template>
 
@@ -15,17 +11,6 @@ export default {
   components: {
     NavigationBar,
   },
-  data() {
-    return {
-      userLoggedIn: false,
-    };
-  },
-  loggedIn() {
-    this.userLoggedIn = true;
-  },
-  loggedOut() {
-    this.userLoggedIn = false;
-  },
 };
 </script>
 
@@ -35,7 +20,16 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: #eeeeee;
+  background-color: #555555;
+}
+
+html {
+  background-color: #555555;
+}
+
+:root {
+  color-scheme: dark;
 }
 
 nav {
@@ -44,7 +38,7 @@ nav {
 
 nav a {
   font-weight: bold;
-  color: #ffffff;
+  color: #eeeeee;
   text-decoration: none;
 }
 
@@ -61,5 +55,23 @@ nav a.router-link-exact-active {
   display: flex;
   justify-content: space-between;
   width: 100vw;
+}
+
+.align-content-center-v-and-h {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.margin-top-bottom {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.text-align-center {
+  text-align: center;
+}
+.text-align-left {
+  text-align: left;
 }
 </style>

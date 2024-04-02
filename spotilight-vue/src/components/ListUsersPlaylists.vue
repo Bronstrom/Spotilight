@@ -1,10 +1,10 @@
 <template>
   <div class="playlists">
-    <h3>List Playlists</h3>
-    {{ console.log(originalPlaylistList) }}
     <ListPlaylistItems
       playlistItemType="playlist"
+      playlistItemTitle="List Playlists"
       :originalPlaylistItems="originalPlaylistList"
+      :loadedItemList="loadedItemList"
       @deleted="aquireAllPlaylists"
       @created="aquireAllPlaylists"
     />
@@ -23,6 +23,7 @@ export default {
   data() {
     return {
       originalPlaylistList: null,
+      loadedItemList: false,
     };
   },
   methods: {
@@ -53,6 +54,7 @@ export default {
                   ...this.originalPlaylistList,
                   ...res.data?.items,
                 ];
+                this.loadedItemList = true;
               })
               .catch((err) => {
                 console.error(err);

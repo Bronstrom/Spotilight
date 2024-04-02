@@ -1,72 +1,74 @@
 <template>
   <div class="top-tracks">
-    <h3>Top Tracks</h3>
-    <div class="dropdown time-range">
-      <button
-        class="btn btn-primary dropdown-toggle"
-        type="button"
-        id="top-track-frequency-button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        {{ timeRange }}
-      </button>
-      <div class="dropdown-menu" aria-labelledby="top-track-frequency-button">
-        <a
-          class="dropdown-item"
-          @click="(timeRange = 'Short Term'), changeTimeRange('short_term')"
-          >Short Term (Past 4 Weeks)</a
+    <h3 class="col">Top Tracks</h3>
+    <div class="row">
+      <div class="col dropdown time-range">
+        <button
+          class="btn btn-primary dropdown-toggle"
+          type="button"
+          id="top-track-frequency-button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
         >
-        <a
-          class="dropdown-item"
-          @click="(timeRange = 'Medium Term'), changeTimeRange('medium_term')"
-          >Medium Term (Past 6 Months)</a
-        >
-        <a
-          class="dropdown-item"
-          @click="(timeRange = 'Long Term'), changeTimeRange('long_term')"
-          >Long Term (Past Few Years)</a
-        >
+          {{ timeRange }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="top-track-frequency-button">
+          <a
+            class="dropdown-item"
+            @click="(timeRange = 'Short Term'), changeTimeRange('short_term')"
+            >Short Term (Past 4 Weeks)</a
+          >
+          <a
+            class="dropdown-item"
+            @click="(timeRange = 'Medium Term'), changeTimeRange('medium_term')"
+            >Medium Term (Past 6 Months)</a
+          >
+          <a
+            class="dropdown-item"
+            @click="(timeRange = 'Long Term'), changeTimeRange('long_term')"
+            >Long Term (Past Few Years)</a
+          >
+        </div>
       </div>
-    </div>
-    <div class="dropdown limit">
-      <button
-        class="btn btn-primary dropdown-toggle"
-        type="button"
-        id="top-genre-limit-button"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        Show Top {{ limit }}
-      </button>
-      <div class="dropdown-menu" aria-labelledby="top-genre-limit-button">
-        <a class="dropdown-item" @click="limit = 3">Show Top 3</a>
-        <a class="dropdown-item" @click="limit = 5">Show Top 5</a>
-        <a class="dropdown-item" @click="limit = 10">Show Top 10</a>
-        <a class="dropdown-item" @click="limit = 25">Show Top 25</a>
+      <div class="col dropdown limit">
+        <button
+          class="btn btn-primary dropdown-toggle"
+          type="button"
+          id="top-genre-limit-button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          Show Top {{ limit }}
+        </button>
+        <div class="dropdown-menu" aria-labelledby="top-genre-limit-button">
+          <a class="dropdown-item" @click="limit = 3">Show Top 3</a>
+          <a class="dropdown-item" @click="limit = 5">Show Top 5</a>
+          <a class="dropdown-item" @click="limit = 10">Show Top 10</a>
+          <a class="dropdown-item" @click="limit = 25">Show Top 25</a>
+        </div>
       </div>
-    </div>
-    <div class="track create-playlist-from-list">
-      <button
-        class="btn btn-primary create-from-list"
-        data-bs-toggle="modal"
-        data-bs-target="#create-playlist-item-modal-track"
-      >
-        + Create Playlist
-      </button>
-      <SpotilightModal
-        title="Create playlist"
-        id="create-playlist-item-modal-track"
-        :body="
-          'Enter a name below for the ' +
-          limit +
-          ' tracks and select Create Playlist.'
-        "
-        :actionLabel="'Create playlist'"
-        :inputLabel="'Playlist name'"
-        :inputPlaceholder="'Playlist name'"
-        @action="(name) => createPlaylist(name)"
-      />
+      <div class="col track create-playlist-from-list">
+        <button
+          class="btn btn-primary create-from-list"
+          data-bs-toggle="modal"
+          data-bs-target="#create-playlist-item-modal-track"
+        >
+          + Create Playlist
+        </button>
+        <SpotilightModal
+          title="Create playlist"
+          id="create-playlist-item-modal-track"
+          :body="
+            'Enter a name below for the ' +
+            limit +
+            ' tracks and select Create Playlist.'
+          "
+          :actionLabel="'Create playlist'"
+          :inputLabel="'Playlist name'"
+          :inputPlaceholder="'Playlist name'"
+          @action="(name) => createPlaylist(name)"
+        />
+      </div>
     </div>
     <div
       class="track row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
@@ -139,7 +141,7 @@ export default {
   methods: {
     handleTopTracks() {
       const medium_term_track_endpoint =
-        "/spotlight/top-tracks/medium_term/" + MAX_LIMIT_COUNT;
+        "/showcase/top-tracks/medium_term/" + MAX_LIMIT_COUNT;
       axios
         .get(medium_term_track_endpoint)
         .then((res) => {
@@ -151,7 +153,7 @@ export default {
         });
 
       const short_term_track_endpoint =
-        "/spotlight/top-tracks/short_term/" + MAX_LIMIT_COUNT;
+        "/showcase/top-tracks/short_term/" + MAX_LIMIT_COUNT;
       axios
         .get(short_term_track_endpoint)
         .then((res) => {
@@ -162,7 +164,7 @@ export default {
         });
 
       const long_term_track_endpoint =
-        "/spotlight/top-tracks/long_term/" + MAX_LIMIT_COUNT;
+        "/showcase/top-tracks/long_term/" + MAX_LIMIT_COUNT;
       axios
         .get(long_term_track_endpoint)
         .then((res) => {
