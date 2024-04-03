@@ -2,10 +2,6 @@
 import { user } from "../user.js";
 </script>
 
-<script setup>
-import { user } from "../user.js";
-</script>
-
 <template>
   <div
     class="home align-content-center-v-and-h main-content-gutter"
@@ -28,13 +24,11 @@ import { user } from "../user.js";
 <script>
 import Login from "@/components/Login.vue";
 import Profile from "@/components/Profile.vue";
-import Profile from "@/components/Profile.vue";
 
 export default {
   name: "HomeView",
   components: {
     Login,
-    Profile,
     Profile,
   },
 };
