@@ -203,7 +203,6 @@
     </div>
   </div>
   <div>
-  <div>
     <SpotilightModal
       :actionCompletionFlow="null"
       :title="'Delete ' + playlistItemType + '(s)'"
@@ -596,8 +595,6 @@ export default {
     playlistItemType: String,
     playlistItemTitle: String,
     loadedItemList: Boolean,
-    playlistItemTitle: String,
-    loadedItemList: Boolean,
     originalPlaylistItems: Object,
     // Single playlist item specific
     itemId: String,
@@ -988,19 +985,6 @@ export default {
   },
 };
 </script>
-
-<style>
-.item-sticky-top {
-  position: sticky;
-  top: 0;
-  z-index: 1;
-  background: #aaaaaa;
-}
-.item-sticky-top-sub {
-  position: sticky;
-  top: 3rem;
-}
-</style>
 
 <style>
 .item-sticky-top {
