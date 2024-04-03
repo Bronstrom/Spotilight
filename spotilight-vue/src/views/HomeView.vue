@@ -7,10 +7,16 @@ import { user } from "../user.js";
     class="home align-content-center-v-and-h main-content-gutter"
     style="height: 90vh"
   >
-    <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" height="250" />
-    <Login v-if="!user.displayName" welcome_msg="Welcome to Spotilight!" />
-    <div v-else>
-      <Profile />
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" height="250" />
+      </div>
+      <div v-if="!user.displayName" class="col-12 col-md-6">
+        <Login welcome_msg="Welcome to Spotilight!" />
+      </div>
+      <div v-else class="col-12 col-md-6">
+        <Profile />
+      </div>
     </div>
   </div>
 </template>

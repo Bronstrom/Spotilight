@@ -184,7 +184,9 @@
             autocomplete="off"
             checked
           />
-          <label class="btn btn-outline-dark" for="grid-selection">Grid</label>
+          <label class="btn btn-outline-dark" for="grid-selection"
+            ><img src="@/assets/grid.png" height="25" alt="Grid"
+          /></label>
           <input
             v-on:change="viewType = 'list'"
             type="radio"
@@ -193,7 +195,9 @@
             id="list-selection"
             autocomplete="off"
           />
-          <label class="btn btn-outline-dark" for="list-selection">List</label>
+          <label class="btn btn-outline-dark" for="list-selection"
+            ><img src="@/assets/list.png" height="25" alt="List"
+          /></label>
         </div>
       </div>
     </div>

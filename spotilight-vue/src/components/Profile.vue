@@ -3,7 +3,7 @@ import { user } from "../user.js";
 </script>
 
 <template>
-  <div class="profile margin-top-bottom">
+  <div class="profile margin-top-bottom row">
     <h1>Welcome, {{ user.displayName }}!</h1>
   </div>
   <div class="margin-top-bottom">
