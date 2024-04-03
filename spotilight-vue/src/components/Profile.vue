@@ -2,6 +2,10 @@
 import { user } from "../user.js";
 </script>
 
+<script setup>
+import { user } from "../user.js";
+</script>
+
 <template>
   <div class="profile margin-top-bottom row">
     <h1>Welcome, {{ user.displayName }}!</h1>
