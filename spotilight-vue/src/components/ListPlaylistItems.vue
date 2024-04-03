@@ -184,7 +184,9 @@
             autocomplete="off"
             checked
           />
-          <label class="btn btn-outline-dark" for="grid-selection">Grid</label>
+          <label class="btn btn-outline-dark" for="grid-selection"
+            ><img src="@/assets/grid.png" height="25" alt="Grid"
+          /></label>
           <input
             v-on:change="viewType = 'list'"
             type="radio"
@@ -193,11 +195,14 @@
             id="list-selection"
             autocomplete="off"
           />
-          <label class="btn btn-outline-dark" for="list-selection">List</label>
+          <label class="btn btn-outline-dark" for="list-selection"
+            ><img src="@/assets/list.png" height="25" alt="List"
+          /></label>
         </div>
       </div>
     </div>
   </div>
+  <div>
   <div>
     <SpotilightModal
       :actionCompletionFlow="null"
@@ -420,6 +425,153 @@
       </tbody>
     </table>
   </div>
+  <div class="main-content-gutter margin-top-bottom">
+    <div
+      v-if="viewType === 'grid'"
+      class="playlist row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 justify-content-center"
+    >
+      <template v-if="!sortedPlaylistItems && !loadedItemList">
+        <div
+          v-for="index in 3"
+          class="playlist col"
+          v-bind:key="index + '_placeholder_item'"
+          :id="index + '_placeholder_item'"
+        >
+          <div class="playlist card h-100">
+            <div
+              class="card-img-top placeholder-wave p-5"
+              style="background-color: gray"
+            ></div>
+            <div class="card-body">
+              <h5 class="card-title placeholder-wave">
+                <span class="placeholder col-6"></span>
+              </h5>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+                <span class="placeholder col-4"></span>
+              </p>
+              <a href="#" class="btn btn-primary disabled"></a>
+            </div>
+          </div>
+        </div>
+      </template>
+      <div
+        v-else
+        v-for="playlistItem in filterList(sortedPlaylistItems)"
+        class="playlist col"
+        v-bind:key="getPlaylistItemId(playlistItem)"
+        :id="getPlaylistItemId(playlistItem) + '_item'"
+        @click="
+          !selectionMode
+            ? isTypePlaylist() &&
+              goToPlaylistPage(getPlaylistItemId(playlistItem))
+            : handleSelection(getPlaylistItemId(playlistItem))
+        "
+      >
+        <!--{{ console.log(playlist) }}-->
+        <div
+          class="playlist card h-100"
+          :style="{
+            'background-color': selectedItems.includes(
+              getPlaylistItemId(playlistItem)
+            )
+              ? 'orange'
+              : 'white',
+          }"
+        >
+          <component :is="playlistItemComponent" :playlistItem="playlistItem" />
+        </div>
+      </div>
+    </div>
+    <!-- Render list view -->
+    <table v-else class="table table-striped">
+      <thead class="thead-dark item-sticky-top-sub">
+        <tr>
+          <th>Image</th>
+          <th>Title</th>
+          <th v-if="isTypePlaylist()">Owner</th>
+          <th v-if="isTypePlaylist()">Visibility</th>
+          <th v-if="isTypePlaylist()">Description</th>
+          <th v-if="isTypePlaylist()">Track Count</th>
+          <th v-if="isTypeTrack()">Added At</th>
+          <th v-if="isTypeTrack()">Local</th>
+          <th v-if="isTypeTrack()">Explicit</th>
+          <th v-if="isTypeTrack()">Album/Single</th>
+          <th v-if="isTypeTrack()">Duration</th>
+          <th v-if="isTypeTrack()">Artist</th>
+          <th>Link</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template v-if="!sortedPlaylistItems && !loadedItemList">
+          <tr
+            v-for="index in 3"
+            class="playlist"
+            v-bind:key="index + '_placeholder_item'"
+            :id="index + '_placeholder_item'"
+          >
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+            <td>
+              <p class="card-text placeholder-wave">
+                <span class="placeholder col-7"></span>
+              </p>
+            </td>
+          </tr>
+        </template>
+        <tr
+          v-else
+          v-for="playlistItem in filterList(sortedPlaylistItems)"
+          v-bind:key="getPlaylistItemId(playlistItem)"
+          :id="getPlaylistItemId(playlistItem) + '_item'"
+          @click="
+            !selectionMode
+              ? isTypePlaylist() &&
+                goToPlaylistPage(getPlaylistItemId(playlistItem))
+              : handleSelection(getPlaylistItemId(playlistItem))
+          "
+        >
+          <component
+            :is="playlistItemComponent"
+            :playlistItem="playlistItem"
+            :color="
+              selectedItems.includes(getPlaylistItemId(playlistItem))
+                ? 'orange'
+                : 'white'
+            "
+          />
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -442,6 +594,8 @@ export default {
   },
   props: {
     playlistItemType: String,
+    playlistItemTitle: String,
+    loadedItemList: Boolean,
     playlistItemTitle: String,
     loadedItemList: Boolean,
     originalPlaylistItems: Object,
@@ -834,6 +988,19 @@ export default {
   },
 };
 </script>
+
+<style>
+.item-sticky-top {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #aaaaaa;
+}
+.item-sticky-top-sub {
+  position: sticky;
+  top: 3rem;
+}
+</style>
 
 <style>
 .item-sticky-top {

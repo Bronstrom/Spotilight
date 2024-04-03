@@ -61,7 +61,14 @@ import { user } from "../user.js";
               loading="lazy"
             />
           </template>
-          <span v-else style="font-size: 2rem">O</span>
+          <span v-else
+            ><img
+              src="@/assets/placeholder_user.jpg"
+              class="rounded-circle"
+              height="50"
+              alt="User Profile"
+              loading="lazy"
+          /></span>
         </a>
         <ul class="dropdown-menu">
           <li>
