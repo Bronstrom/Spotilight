@@ -68,6 +68,16 @@ nav a.router-link-exact-active {
   margin-bottom: 2rem;
 }
 
+.sm-rounded-button {
+  height: 2.5rem;
+  width: 2.5rem;
+  border-radius: 2rem;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background-color: gray;
+}
+
 .text-align-center {
   text-align: center;
 }
