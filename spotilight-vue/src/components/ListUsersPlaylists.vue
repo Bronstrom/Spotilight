@@ -1,6 +1,13 @@
 <template>
   <div class="playlists">
+    <div
+      v-if="originalPlaylistList?.length < 1"
+      class="track not-specified p-5"
+    >
+      No user public or private playlists.
+    </div>
     <ListPlaylistItems
+      v-else
       playlistItemType="playlist"
       playlistItemTitle="List Playlists"
       :originalPlaylistItems="originalPlaylistList"

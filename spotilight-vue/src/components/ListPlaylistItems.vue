@@ -278,8 +278,11 @@
   </div>
   <!-- Render grid view -->
   <div class="main-content-gutter margin-top-bottom">
+    <p v-if="filterList(sortedPlaylistItems)?.length < 1">
+      No items to display using the current filter.
+    </p>
     <div
-      v-if="viewType === 'grid'"
+      v-else-if="viewType === 'grid'"
       class="playlist row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 justify-content-center"
     >
       <template v-if="!sortedPlaylistItems && !loadedItemList">
@@ -436,7 +439,7 @@ import axios from "axios";
 
 export default {
   name: "ListUsersPlaylists",
-  emits: ["deleted", "created"],
+
   components: {
     GridShowPlaylist,
     GridShowTrack,
