@@ -51,20 +51,19 @@
         </div>
       </div>
     </div>
-    <div>
-      <div v-if="originalTrackList.length < 1" class="track not-specified">
-        No tracks in this playlist
-      </div>
-      <div v-else>
-        <ListPlaylistItems
-          playlistItemType="track"
-          :playlistItemTitle="playlist.name + ': Track List'"
-          :originalPlaylistItems="originalTrackList"
-          :loadedItemList="loadedItemList"
-          :itemId="playlistID"
-          @deleted="aquirePlaylist"
-        />
-      </div>
+    <SearchToAddTracks :playlistID="playlistID" @added="aquirePlaylist" />
+    <div v-if="originalTrackList.length < 1" class="track not-specified">
+      No tracks in this playlist
+    </div>
+    <div v-else>
+      <ListPlaylistItems
+        playlistItemType="track"
+        :playlistItemTitle="playlist.name + ': Track List'"
+        :originalPlaylistItems="originalTrackList"
+        :loadedItemList="loadedItemList"
+        :itemId="playlistID"
+        @deleted="aquirePlaylist"
+      />
     </div>
   </div>
 </template>
@@ -72,11 +71,13 @@
 <script>
 import axios from "axios";
 import ListPlaylistItems from "../components/ListPlaylistItems.vue";
+import SearchToAddTracks from "./SearchToAddTracks.vue";
 
 export default {
   name: "ListUserPlaylistDetails",
   components: {
     ListPlaylistItems,
+    SearchToAddTracks,
   },
   props: {
     playlistID: String,
