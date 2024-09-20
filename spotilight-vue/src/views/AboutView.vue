@@ -257,6 +257,21 @@
       text field for the name of the new playlist.
     </p>
 
+    <h5>Add New Tracks to the Current Playlist</h5>
+
+    <p>
+      Above the tracks list, you can select the "+ Add Tracks" button to add
+      tracks. Once selected, you can either search for tracks by title ("Add
+      Individual Track(s)") or search for an artist and add a number of their
+      top tracks ("Add Artist Top Track(s)"). With the "Add Individual Track(s)"
+      option, you can select up to 10 songs at a time to add directly to the
+      current playlist's track list. If you choose the "Add Artist Top
+      Track(s)", you have the option to choose up to 10 artists and up to 10 top
+      tracks from each of those artists (up to 100 tracks possible at a time).
+      During this process you can use the "Cancel" button if you change your
+      mind to avoid adding any new tracks.
+    </p>
+
     <h2>Showcase/Stats</h2>
     <hr />
 

@@ -68,31 +68,41 @@ View the playlists you share on your public profile.
 
 #### Selection mode (Playlists)
 
-When clicking on the "Selection Mode" button, you will be able to click on one or more playlists and get a couple options on ways you can manage or alter you playlists.
+When clicking on the "Selection Mode" button, you will be able to click on one or more playlists and get a couple
+options on ways you can manage or alter you playlists.
 
 ##### Delete Selected Items
 
-When selecting one or more playlists, you have the option to delete the items you have selected. A modal will appear to confirm when clicking this button. You can retrieve any deleted playlists in a certain timeline specified by Spotify from this link: https://www.spotify.com/us/account/recover-playlists/.
+When selecting one or more playlists, you have the option to delete the items you have selected. A modal will appear to
+confirm when clicking this button. You can retrieve any deleted playlists in a certain timeline specified by Spotify
+from this link: https://www.spotify.com/us/account/recover-playlists/.
 
 ##### Duplicate Playlist
 
-This option appears when you have selected a single playlist. All the items within your playlist will be added to a new playlist. When selecting this option, a modal will appear with a required text field for the name of the new playlist.
+This option appears when you have selected a single playlist. All the items within your playlist will be added to a new
+playlist. When selecting this option, a modal will appear with a required text field for the name of the new playlist.
 
 ##### Merge Selected Items
 
-This option appears when you have selected more than one playlist. All the items within the playlists you have selected will be combined and added to a new playlist without deleting the current playlists you have created. When selecting this option, a modal will appear with a required text field for the name of the new playlist.
+This option appears when you have selected more than one playlist. All the items within the playlists you have selected
+will be combined and added to a new playlist without deleting the current playlists you have created. When selecting
+this option, a modal will appear with a required text field for the name of the new playlist.
 
 ### Viewing and Managing a Single Playlists
 
-When not in selection mode and you click on a playlist, you can view more details about an individual playlist and it's track information.
+When not in selection mode and you click on a playlist, you can view more details about an individual playlist and
+it's track information.
 
 #### Viewing (Tracks)
 
-Just like with playlists on the "List Playlists" page, there are two ways you can view a playlists tracks, this is through the "Grid" and "List" views. In "Grid" view, you can view your tracks in a card block format. In "List" view, you can view your tracks in a tabular row format.
+Just like with playlists on the "List Playlists" page, there are two ways you can view a playlists tracks, this is
+through the "Grid" and "List" views. In "Grid" view, you can view your tracks in a card block format. In "List" view,
+you can view your tracks in a tabular row format.
 
 #### Sorting (Tracks)
 
-You have a few options to sort tracks in a playlist, which organize how you view your tracks in a playlist. Select the "Sort" dropdown to choose one of the following options:
+You have a few options to sort tracks in a playlist, which organize how you view your tracks in a playlist. Select the
+"Sort" dropdown to choose one of the following options:
 
 ##### Unsorted
 
@@ -120,7 +130,8 @@ Sort tracks ordered by the lead artist alphabeetically.
 
 #### Filtering (Tracks)
 
-You have a few options to filter tracks in a playlist, which show and hide tracks from a playlist's details page. Select the "Filter" dropdown to choose one of the following options:
+You have a few options to filter tracks in a playlist, which show and hide tracks from a playlist's details page.
+Select the "Filter" dropdown to choose one of the following options:
 
 ##### No Filter
 
@@ -144,7 +155,8 @@ Show only tracks with explicit words in them in the current playlist.
 
 #### Selection mode (Tracks)
 
-When clicking on the selection mode button, you will be able to click on one or more tracks and get a couple options on ways you can manage or alter tracks in a playlist.
+When clicking on the selection mode button, you will be able to click on one or more tracks and get a couple options
+on ways you can manage or alter tracks in a playlist.
 
 ##### Select All Items
 
@@ -156,11 +168,23 @@ Unselect all tracks in the current playlist.
 
 ##### Delete Selected Items
 
-When selecting one or more tracks, you have the option to delete the items you have selected from the current playlist. A modal will appear to confirm when clicking this button.
+When selecting one or more tracks, you have the option to delete the items you have selected from the current playlist.
+A modal will appear to confirm when clicking this button.
 
 ##### Create Playlist from Selected Items
 
-This option appears when you have selected one or more tracks. All the items within the playlist you have selected will be added to a new playlist. When selecting this option, a modal will appear with a required text field for the name of the new playlist.
+This option appears when you have selected one or more tracks. All the items within the playlist you have selected will
+be added to a new playlist. When selecting this option, a modal will appear with a required text field for the name of
+the new playlist.
+
+##### Add New Tracks to the Current Playlist
+
+Above the tracks list, you can select the "+ Add Tracks" button to add tracks. Once selected, you can either search for
+tracks by title ("Add Individual Track(s)") or search for an artist and add a number of their top tracks ("Add Artist
+Top Track(s)"). With the "Add Individual Track(s)" option, you can select up to 10 songs at a time to add directly to
+the current playlist's track list. If you choose the "Add Artist Top Track(s)", you have the option to choose up to 10
+artists and up to 10 top tracks from each of those artists (up to 100 tracks possible at a time). During this process
+you can use the "Cancel" button if you change your mind to avoid adding any new tracks.
 
 ## Showcase/Stats
 
@@ -172,7 +196,9 @@ To view your top tracks for a specific time frame you can view them within the "
 
 #### Top Tracks Configurations
 
-You have the option to view Short Term (Past 4 Weeks), Medium Term (Past 6 Moths), and Long Term (Past Few Years) durations for you top tracks by selecting the time frame dropdown. You can also display a limited number of top tracks (3, 5, 10, and 25) on a page by choosing the count dropdown.
+You have the option to view Short Term (Past 4 Weeks), Medium Term (Past 6 Moths), and Long Term (Past Few Years)
+durations for you top tracks by selecting the time frame dropdown. You can also display a limited number of top tracks
+(3, 5, 10, and 25) on a page by choosing the count dropdown.
 
 #### Create a playlist directly from Top Tracks
 
@@ -184,19 +210,24 @@ To view your top artists for a specific time frame you can view them within the 
 
 #### Top Tracks Configurations
 
-You have the option to view Short Term (Past 4 Weeks), Medium Term (Past 6 Moths), and Long Term (Past Few Years) durations for you top artists by selecting the time frame dropdown. You can also display a limited number of top artists (3, 5, 10, and 25) on a page by choosing the count dropdown.
+You have the option to view Short Term (Past 4 Weeks), Medium Term (Past 6 Moths), and Long Term (Past Few Years)
+durations for you top artists by selecting the time frame dropdown. You can also display a limited number of top
+artists (3, 5, 10, and 25) on a page by choosing the count dropdown.
 
 #### Create a playlist directly from Top Tracks
 
-Click the "+ Create Playlist" button to create a playlist from the top 5 tracks for the artists currently displayed. Please note, if there are a lot of artists displayed it may take up to 10 seconds for the full request to process.
+Click the "+ Create Playlist" button to create a playlist from the top 5 tracks for the artists currently displayed.
+Please note, if there are a lot of artists displayed it may take up to 10 seconds for the full request to process.
 
 ### Top Genres
 
-In the "Top Genres" section of the page, you can view a breakdown in a doughnut view of your top genres and sub-genres (smaller categorizations of genres) you listen to for a period of time.
+In the "Top Genres" section of the page, you can view a breakdown in a doughnut view of your top genres and sub-genres
+(smaller categorizations of genres) you listen to for a period of time.
 
 #### Top Genres Configurations
 
-You have the option to view Short Term (Past 4 Weeks), Medium Term (Past 6 Moths), and Long Term (Past Few Years) durations for you top artists by selecting the time frame dropdown.
+You have the option to view Short Term (Past 4 Weeks), Medium Term (Past 6 Moths), and Long Term (Past Few Years)
+durations for you top artists by selecting the time frame dropdown.
 
 ## About
 
@@ -204,4 +235,10 @@ You can view information on how to use the application and how to use it on this
 
 ## Logging in/out of your account
 
-In the top application navigation bar, you have the ability to login or logout of your account by clicking on the circular profile icon. You are signed in if your own Spotify profile icon appears in the circle; otherwise, a placeholder user icon will appear within the circle indicating no user is logged in. Once clicking on the circular icon menu options will dropdown. If you are logged in, you will have the "Logout" option, if you are not logged in, you will have the "Login" option. When clicking on "Login", you go through a similar flow to [Authentification](#authentification). When clicking on "Logout", you will be directly logged out of Spotify and met with a screen saying "You are logged out."
+In the top application navigation bar, you have the ability to login or logout of your account by clicking on the
+circular profile icon. You are signed in if your own Spotify profile icon appears in the circle; otherwise, a
+placeholder user icon will appear within the circle indicating no user is logged in. Once clicking on the circular
+icon menu options will dropdown. If you are logged in, you will have the "Logout" option, if you are not logged in,
+you will have the "Login" option. When clicking on "Login", you go through a similar flow to
+[Authentification](#authentification). When clicking on "Logout", you will be directly logged out of Spotify and met
+with a screen saying "You are logged out."
