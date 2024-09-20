@@ -27,17 +27,20 @@ def index():
 from auth import auth_bp
 app.register_blueprint(auth_bp, url_prefix="/auth")
 
-from user import user_bp
-app.register_blueprint(user_bp, url_prefix="/user")
-
 from playlist import playlist_bp
 app.register_blueprint(playlist_bp, url_prefix="/playlist")
 
 from playlists import playlists_bp
 app.register_blueprint(playlists_bp, url_prefix="/playlists")
 
+from search import search_bp
+app.register_blueprint(search_bp, url_prefix="/search")
+
 from showcase import showcase_bp
 app.register_blueprint(showcase_bp, url_prefix="/showcase")
+
+from user import user_bp
+app.register_blueprint(user_bp, url_prefix="/user")
 
 # Initialize Flask app
 if __name__ == "__main__":

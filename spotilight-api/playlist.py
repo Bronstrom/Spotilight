@@ -118,3 +118,35 @@ def create_user_playlist(playlist_name):
             return { "status": "Error: failed to add tracks to '" + playlist_name + "'" }
         i += 1
     return { "status": "success" }
+
+# post endpoint: Add to an already created playlist with items
+@playlist_bp.route("add-tracks/<playlist_id>", methods=["POST"])
+def add_tracks_user_playlist(playlist_id):
+    # User will need to be logged in to aquire profile data - attempt sign in again
+    if "access_token" not in session:
+        return redirect("/auth/login")
+    # Token has expired and token should be refreshed
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/auth/refresh-token")
+    headers = {
+        "content-type": "application/x-www-form-urlencoded",
+        "Authorization": f"Bearer {session['access_token']}"
+    }
+    # Store inputs in list
+    playlist_track_uri_list = request.json.get("items")
+    # Add tracks to playlist
+    i = 0
+    # Handle Spotify 100 delete limit
+    while (i < len(playlist_track_uri_list) / 100):
+        hundredLimitSlice = slice(i * 100, (i + 1) * 100)
+        tracks_object = { 
+            "uris": playlist_track_uri_list[hundredLimitSlice],
+            "position": 0
+        }
+        playlist_tracks_url = API_BASE_ENDPOINT + "playlists/" + playlist_id + "/tracks"
+        response_add_tracks = requests.post(playlist_tracks_url, headers=headers, json=tracks_object)
+        # Output final status message
+        if response_add_tracks == None:
+            return { "status": "Error: failed to add tracks to '" + playlist_name + "'" }
+        i += 1
+    return { "status": "success" }
