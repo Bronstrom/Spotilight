@@ -20,7 +20,11 @@
     <p class="playlist card-album">
       Track Count: {{ playlistItem.tracks.total }}
     </p>
-    <a class="btn-primary" :href="playlistItem.href">Check it out on Spotify</a>
+    <a
+      v-if="playlistItem?.external_urls?.spotify"
+      :href="playlistItem.external_urls.spotify"
+      ><button type="button" class="btn btn-secondary">View on Spotify</button>
+    </a>
   </div>
 </template>
 

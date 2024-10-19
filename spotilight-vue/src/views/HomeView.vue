@@ -4,18 +4,20 @@ import { user } from "../user.js";
 
 <template>
   <div
-    class="home align-content-center-v-and-h main-content-gutter"
+    class="home align-content-center-v-and-h main-content-gutter content-gradient"
     style="height: 90vh"
   >
-    <div class="row">
-      <div class="col-12 col-md-6">
-        <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" height="250" />
+    <div class="row flex items-center rounded-light-background padding-5">
+      <div class="col-12 col-md-6 padding-1">
+        <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" width="65%" />
       </div>
-      <div v-if="!user.displayName" class="col-12 col-md-6">
-        <Login welcome_msg="Welcome to Spotilight!" />
-      </div>
-      <div v-else class="col-12 col-md-6">
-        <Profile />
+      <div class="col-12 col-md-6 padding-1">
+        <div v-if="!user.displayName">
+          <Login welcome_msg="Welcome to Spotilight!" />
+        </div>
+        <div v-else>
+          <Profile />
+        </div>
       </div>
     </div>
   </div>
@@ -33,3 +35,10 @@ export default {
   },
 };
 </script>
+
+<style>
+.rounded-light-background {
+  background-color: rgba(255, 255, 255, 0.25);
+  border-radius: 25px;
+}
+</style>

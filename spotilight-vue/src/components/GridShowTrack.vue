@@ -44,9 +44,11 @@
       {{ artist.name }} ({{ artist.type }})
     </span>
   </p>
-  <a class="btn-primary" :href="playlistItem.track.href"
-    >Check it out on Spotify</a
-  >
+  <a
+    v-if="playlistItem?.track?.external_urls?.spotify"
+    :href="playlistItem.track.external_urls.spotify"
+    ><button type="button" class="btn btn-secondary">View on Spotify</button>
+  </a>
 </template>
 
 <script>

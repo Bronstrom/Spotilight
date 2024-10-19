@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <h1>{{ welcome_msg }}</h1>
+    <h1 class="padding-1">{{ welcome_msg }}</h1>
     <button
       type="button"
       @click="handleSpotifyAuthenticate()"

@@ -1,5 +1,5 @@
 <template>
-  <div class="about main-content-gutter margin-top-bottom">
+  <div class="about main-content-gutter margin-bottom content-gradient">
     <h1 class="text-align-center">About Spotilight</h1>
 
     <p>

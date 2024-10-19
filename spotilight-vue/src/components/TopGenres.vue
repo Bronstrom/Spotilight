@@ -29,26 +29,32 @@
       </div>
     </div>
     <div class="chart container">
-      <h3>Top Genres</h3>
+      <h3 class="pt-3 pb-2">Top Genres</h3>
+      <template v-if="!chartloaded">
+        <PlaceholderPieChart />
+      </template>
       <Doughnut
-        v-if="chartloaded"
+        v-else
         id="top-genres"
         :data="chartDataGenres"
         :options="chartOptionsGenres"
       />
-      <p>
+      <p class="pt-2">
         {{ genreDebrief(spotifyCategoryGenreCountCurrent, "genre") }}
       </p>
     </div>
-    <div class="chart container">
-      <h3>Top Sub-Genres:</h3>
+    <div class="chart container pt-5">
+      <h3 class="pt-3 pb-2">Top Sub-Genres:</h3>
+      <template v-if="!chartloaded">
+        <PlaceholderPieChart />
+      </template>
       <Doughnut
-        v-if="chartloaded"
+        v-else
         id="top-subgenres"
         :data="chartDataSubgenres"
         :options="chartOptionsSubgenres"
       />
-      <p>
+      <p class="pt-2">
         {{ genreDebrief(userGenreCountCurrent, "sub-genre") }}
       </p>
     </div>
@@ -67,6 +73,7 @@ import {
   ArcElement,
   CategoryScale,
 } from "chart.js";
+import PlaceholderPieChart from "./PlaceholderPieChart.vue";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement, CategoryScale);
 
@@ -74,7 +81,7 @@ const TOP_COUNT = 50;
 
 export default {
   name: "TopGenres",
-  components: { Doughnut },
+  components: { Doughnut, PlaceholderPieChart },
   data() {
     return {
       originalGenresShort: [],
@@ -149,7 +156,9 @@ export default {
           break;
       }
 
-      return `You've listened to
+      return !currentList?.keys?.length
+        ? "[Loading . . .]"
+        : `You've listened to
         ${currentList?.keys?.length} ${genreType}(s) in the
         past ${period}, with ${currentList?.keys?.[0]} at the top.`;
     },
@@ -519,7 +528,6 @@ export default {
       // Create genre count hash map
       let userGenreCount = {};
       // Loop through artist object
-
       artistList?.forEach((artist) => {
         // Loop through genre array and count occurrences of each genre
         artist?.genres?.forEach((genre) => {

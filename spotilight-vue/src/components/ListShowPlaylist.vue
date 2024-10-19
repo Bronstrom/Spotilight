@@ -25,14 +25,14 @@
       'background-color': color,
     }"
   >
-    Owner: {{ playlistItem.owner?.display_name }}
+    {{ playlistItem.owner?.display_name }}
   </td>
   <td
     :style="{
       'background-color': color,
     }"
   >
-    Visibility: {{ playlistItem.public ? "Public" : "Private" }}
+    {{ playlistItem.public ? "Public" : "Private" }}
   </td>
   <td
     :style="{
@@ -53,7 +53,11 @@
       'background-color': color,
     }"
   >
-    <a class="btn-primary" :href="playlistItem.href">Check it out on Spotify</a>
+    <a
+      v-if="playlistItem?.external_urls?.spotify"
+      :href="playlistItem.external_urls.spotify"
+      ><button type="button" class="btn btn-secondary">View on Spotify</button>
+    </a>
   </td>
 </template>
 

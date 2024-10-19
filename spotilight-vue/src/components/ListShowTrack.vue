@@ -26,7 +26,7 @@
       'background-color': color,
     }"
   >
-    Added At: {{ playlistItem["added_at"] }}
+    {{ playlistItem["added_at"] }}
     <!--by:
             {{ playlistItem["added_by"] }}-->
   </td>
@@ -35,7 +35,7 @@
       'background-color': color,
     }"
   >
-    Local: {{ playlistItem["is_local"] }}
+    {{ playlistItem["is_local"] }}
     <!--by:
             {{ playlistItem["added_by"] }}-->
   </td>
@@ -44,7 +44,7 @@
       'background-color': color,
     }"
   >
-    Explicit: {{ playlistItem.track.explicit }}
+    {{ playlistItem.track.explicit }}
     <!--by:
             {{ playlistItem["added_by"] }}-->
   </td>
@@ -54,7 +54,7 @@
       'background-color': color,
     }"
   >
-    Single: {{ playlistItem.track.album.name }}
+    {{ playlistItem.track.album.name }}
   </td>
   <td
     v-else
@@ -62,7 +62,7 @@
       'background-color': color,
     }"
   >
-    Album: {{ playlistItem.track.album.name }} (Disc:
+    {{ playlistItem.track.album.name }} (Disc:
     {{ playlistItem.track["disc_number"] }}, Track:
     {{ playlistItem.track["track_number"] }})
   </td>
@@ -71,14 +71,13 @@
       'background-color': color,
     }"
   >
-    Duration: {{ playlistItem.track["duration_ms"] }} ms
+    {{ playlistItem.track["duration_ms"] }} ms
   </td>
   <td
     :style="{
       'background-color': color,
     }"
   >
-    Artist(s):
     <span v-for="(artist, index) in playlistItem.track?.artists" :key="artist">
       {{ index === 0 ? "" : ", " }}
       {{ artist.name }} ({{ artist.type }})
@@ -89,9 +88,11 @@
       'background-color': color,
     }"
   >
-    <a class="btn-primary" :href="playlistItem.track.href"
-      >Check it out on Spotify</a
-    >
+    <a
+      v-if="playlistItem?.track?.external_urls?.spotify"
+      :href="playlistItem.track.external_urls.spotify"
+      ><button type="button" class="btn btn-secondary">View on Spotify</button>
+    </a>
   </td>
 </template>
 

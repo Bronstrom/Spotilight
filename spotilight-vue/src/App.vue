@@ -51,6 +51,49 @@ nav a.router-link-exact-active {
   padding-right: 10vw;
 }
 
+.content-gradient {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0) 30rem
+  );
+  background-image: -moz-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0) 30rem
+  );
+  background-image: -webkit-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.25) 0%,
+    rgba(255, 255, 255, 0) 30rem
+  );
+}
+
+.flex {
+  display: flex;
+}
+
+.grid {
+  display: grid;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.padding-1 {
+  padding: 16px;
+}
+.padding-5 {
+  padding: 60px;
+}
+.padding-left-1 {
+  padding-left: 16px;
+}
+.padding-right-1 {
+  padding-right: 16px;
+}
+
 .space-between {
   display: flex;
   justify-content: space-between;
@@ -65,6 +108,9 @@ nav a.router-link-exact-active {
 
 .margin-top-bottom {
   margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+.margin-bottom {
   margin-bottom: 2rem;
 }
 
@@ -83,5 +129,9 @@ nav a.router-link-exact-active {
 }
 .text-align-left {
   text-align: left;
+}
+
+.items-center {
+  align-items: center;
 }
 </style>

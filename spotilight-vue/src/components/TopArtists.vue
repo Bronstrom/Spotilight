@@ -74,9 +74,21 @@
       </div>
     </div>
     <div
-      class="artist row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center"
+      class="artist row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4 justify-content-center pt-3"
     >
+      <!-- Skeleton items -->
+      <template v-if="curTopArtists.length === 0">
+        <div
+          v-for="index in 5"
+          class="track col"
+          v-bind:key="index + '_placeholder_item'"
+          :id="index + '_placeholder_item'"
+        >
+          <PlaceholderCard />
+        </div>
+      </template>
       <div
+        v-else
         class="artist col"
         v-for="artist in limitedTopArtists()"
         v-bind:key="artist.id"
@@ -113,9 +125,13 @@
             <p class="artist card-text">
               Spotify Popularity Score: {{ artist?.popularity }} / 100
             </p>
-            <a class="btn-primary" :href="artist.href"
-              >Check them out on Spotify</a
-            >
+            <a
+              v-if="artist?.external_urls?.spotify"
+              :href="artist.external_urls.spotify"
+              ><button type="button" class="btn btn-secondary">
+                View on Spotify
+              </button>
+            </a>
           </div>
         </div>
       </div>
@@ -126,6 +142,7 @@
 <script>
 import SpotilightModal from "../components/SpotilightModal.vue";
 import axios from "axios";
+import PlaceholderCard from "./PlaceholderCard.vue";
 
 const DEFAULT_LIMIT_COUNT = 5;
 const MAX_LIMIT_COUNT = 25;
@@ -134,6 +151,7 @@ export default {
   name: "TopArtists",
   components: {
     SpotilightModal,
+    PlaceholderCard,
   },
   data() {
     return {

@@ -1,5 +1,5 @@
 <template>
-  <div class="showcase main-content-gutter margin-top-bottom">
+  <div class="showcase main-content-gutter margin-bottom content-gradient">
     <h1 class="text-align-center">Showcase</h1>
     <div class="row">
       <div class="col col-lg-8">
@@ -31,3 +31,9 @@ export default {
   },
 };
 </script>
+
+<style>
+.showcase h1 {
+  padding-top: 2rem;
+}
+</style>

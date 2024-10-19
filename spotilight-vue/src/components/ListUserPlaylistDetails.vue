@@ -1,6 +1,6 @@
 <template>
   <div class="playlist">
-    <div class="playlist-details main-content-gutter">
+    <div class="playlist-details main-content-gutter content-gradient">
       <button
         type="button"
         class="btn btn-primary margin-top-bottom"

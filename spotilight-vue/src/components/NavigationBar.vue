@@ -8,13 +8,19 @@ import { user } from "../user.js";
     data-bs-theme="dark"
   >
     <div class="main-content-gutter space-between">
-      <div class="navbar-brand">
-        <a href="/">
-          <img alt="Vue logo" src="@/assets/Spotilight_Logo.png" height="25" />
-          Spotilight</a
-        >
+      <div class="navbar-brand flex items-center">
+        <div class="padding-right-1">
+          <a href="/" class="flex items-center">
+            <img
+              alt="Vue logo"
+              src="@/assets/Spotilight_Logo.png"
+              height="25"
+            />
+            <div>Spotilight</div>
+          </a>
+        </div>
         <button
-          class="navbar-toggler"
+          class="navbar-toggler padding-left-1"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"

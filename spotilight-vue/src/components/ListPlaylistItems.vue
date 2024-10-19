@@ -276,8 +276,11 @@
       @action="(name) => createPlaylistFromSelectedTracks(name)"
     />
   </div>
-  <!-- Render grid view -->
-  <div class="main-content-gutter margin-top-bottom">
+  <div
+    class="main-content-gutter content-gradient margin-bottom"
+    style="padding-top: 2rem"
+  >
+    <!-- Render grid view -->
     <p v-if="filterList(sortedPlaylistItems)?.length < 1">
       No items to display using the current filter.
     </p>
@@ -285,35 +288,21 @@
       v-else-if="viewType === 'grid'"
       class="playlist row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 justify-content-center"
     >
+      <!-- Skeleton items -->
       <template v-if="!sortedPlaylistItems && !loadedItemList">
         <div
-          v-for="index in 3"
+          v-for="index in 8"
           class="playlist col"
           v-bind:key="index + '_placeholder_item'"
           :id="index + '_placeholder_item'"
         >
-          <div class="playlist card h-100">
-            <div
-              class="card-img-top placeholder-wave p-5"
-              style="background-color: gray"
-            ></div>
-            <div class="card-body">
-              <h5 class="card-title placeholder-wave">
-                <span class="placeholder col-6"></span>
-              </h5>
-              <p class="card-text placeholder-wave">
-                <span class="placeholder col-7"></span>
-                <span class="placeholder col-4"></span>
-              </p>
-              <a href="#" class="btn btn-primary disabled"></a>
-            </div>
-          </div>
+          <PlaceholderCard />
         </div>
       </template>
       <div
         v-else
         v-for="playlistItem in filterList(sortedPlaylistItems)"
-        class="playlist col"
+        class="playlist col cursor-pointer"
         v-bind:key="getPlaylistItemId(playlistItem)"
         :id="getPlaylistItemId(playlistItem) + '_item'"
         @click="
@@ -436,16 +425,17 @@ import ListShowPlaylist from "../components/ListShowPlaylist.vue";
 import ListShowTrack from "../components/ListShowTrack.vue";
 import SpotilightModal from "../components/SpotilightModal.vue";
 import axios from "axios";
+import PlaceholderCard from "./PlaceholderCard.vue";
 
 export default {
   name: "ListUsersPlaylists",
-
   components: {
     GridShowPlaylist,
     GridShowTrack,
     ListShowPlaylist,
     ListShowTrack,
     SpotilightModal,
+    PlaceholderCard,
   },
   props: {
     playlistItemType: String,
